@@ -2,6 +2,9 @@ SS2Param : Object {
   var <controlSpec;
   var <normalized, <value;
   var <>displayStrategy;
+  var <>label;
+  var <>action;
+  var <widgets;
 
   var <round;
 
@@ -10,25 +13,26 @@ SS2Param : Object {
   const <initMidi = 63.5;
 
   *new {
-    arg min = 0, max = 1, warp = 0, round = 0;
+    arg min = 0, max = 1, warp = 0, round = 0.0001;
     var p = super.new();
     p.init(a_min: min, a_max: max, a_warp: warp, a_round: round);
     ^ p;
   }
 
   init {
-    arg a_min = 0, a_max = 1, a_warp = \lin, a_round = 0;
+    arg a_min = 0, a_max = 1, a_warp = \lin, a_round = 0.0001;
     controlSpec = ControlSpec(minval: a_min, maxval: a_max, warp: a_warp);
     round = a_round;
     this.normalized = 0;
     value = this.map();
+    widgets = List[];
     ^ this;
   }
 
   // SETTERS & GETTERS
 
   value_ {
-    arg v;
+    arg v, performAction = true;
     var min = this.min(), max = this.max();
     value = if (min < max) {
       v.clip(min, max);
@@ -36,13 +40,21 @@ SS2Param : Object {
       v.clip(max, min);
     };
     normalized = this.unmap(value);
+    if (performAction) {
+      this.performAction();
+      this.syncWidgets();
+    };
     ^ this;
   }
 
   normalized_ {
-    arg n;
+    arg n, performAction = true;
     normalized = n.clip(0, 1);
-    value = this.map(n);
+    value = this.map(n).round(round);
+    if (performAction) {
+      this.performAction();
+      this.syncWidgets();
+    };
     ^ this;
   }
 
@@ -52,7 +64,6 @@ SS2Param : Object {
     this.recalculate;
     ^ this;
   }
-
 
   min {
     ^ controlSpec.minval;
@@ -151,4 +162,31 @@ SS2Param : Object {
     arg stream;
     stream << this.display();
   }
+
+  performAction {
+    var a = action.defaultWhenNil({});
+
+    ^ a.value(this);
+  }
+
+  registerWidget {
+    arg w;
+    widgets = widgets.add(w);
+    ^ this;
+  }
+
+  deregisterWidget {
+    arg w;
+    widgets = widgets.remove(w);
+    ^ this;
+  }
+
+  syncWidgets {
+    widgets.do {
+      arg w;
+      w.syncToParam();
+    }
+    ^ this;
+  }
+
 }

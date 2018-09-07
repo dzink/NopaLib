@@ -1,4 +1,4 @@
-SS2ParamDisplaySemitone : SS2ParamDisplay {
+SS2ParamDisplaySemitone : SS2ParamDisplayCenterable {
 
   *new {
 		arg round = 0.01, scale = 1;
