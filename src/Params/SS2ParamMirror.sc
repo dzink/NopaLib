@@ -4,15 +4,15 @@ SS2ParamMirror : SS2Param {
   *new {
     arg max = 1, warp = 0, round = 0;
     var p = super.new();
-    p.init(a_min: 0, a_max: max, a_warp: warp, a_round: round);
+    p.init(a_max: max, a_warp: warp, a_round: round);
     ^ p;
   }
 
   init {
-    arg a_min = 0, a_max = 1, a_warp = \lin, a_round = 0;
-    controlSpec = ControlSpec(minval: a_min, maxval: a_max, warp: a_warp);
+    arg a_max = 1, a_warp = \lin, a_round = 0, a_min = 0;
+    controlSpec = ControlSpec(minval: 0, maxval: a_max, warp: a_warp);
 
-    if (ControlSpec.warp.isKindOf(ExponentialWarp)) {
+    if (controlSpec.warp.isKindOf(ExponentialWarp)) {
       ("SS2Params with Exponential curves will fail upon being calculated.");
     };
 

@@ -86,33 +86,4 @@ TestSS2ParamDisplay : UnitTest {
     this.assertFloatEquals(display.getFromParam(param), 10, 'GetFromParam via param returns value');
     this.assertFloatEquals(display.getFromParam(5), 5, 'GetFromParam via number returns number');
   }
-
-  test_db {
-    var display = SS2ParamDisplayDb();
-    this.assertEquals(display.map(0), "-infdB", "Display dB for 0");
-    this.assertEquals(display.map(0.5), "-6.02dB", "Display dB for 0.5");
-    this.assertEquals(display.map(1), "+0dB", "Display dB for 1");
-    this.assertEquals(display.map(2), "+6.02dB", "Display dB for 2");
-  }
-
-  test_semitone {
-    var display = SS2ParamDisplaySemitone();
-    this.assertEquals(display.map(0.5), "-12st", "Display semitone for 0.5");
-    this.assertEquals(display.map(2), "+12st", "Display semitone for 2");
-    this.assertEquals(display.map(1), "+0st", "Display semitone for 2");
-  }
-
-  test_normalized {
-    param.normalized = 0.5;
-    this.assertEquals(display.map(param), "50Hz", "Display normalized 0.5");
-    display.scale = 2;
-    this.assertEquals(display.map(param), "100Hz", "Display normalized 0.5 with scale of 2");
-  }
-
-  test_percent {
-    param.normalized = 0.5;
-    this.assertEquals(display.map(param), "50Hz", "Display normalized 0.5");
-    display.scale = 2;
-    this.assertEquals(display.map(param), "100Hz", "Display normalized 0.5 with scale of 2");
-  }
 }
