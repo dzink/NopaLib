@@ -1,32 +1,59 @@
+/**
+ * SS2SS2ParamDisplay: A class to help convert params into human-readable
+ * strings. SS2SS2ParamDisplay is generalized, and passes parameter values
+ * through mostly unchanged.
+ */
+
 SS2ParamDisplay : Object {
-  var <>units;
-  var <>round;
-  var <>scale;
+  var <units;
+  var <digits;
+  var <scale;
 
   const <posString = "";
   const <negString = "-";
   const <zeroString = "";
 
+  const maxSiIndex = 9;
+  const minSiIndex = -9;
+
   *new {
-		arg round = 0.01, units = '', scale = 1;
+		arg units = "", digits = 3, scale = 1;
 		var p = super.new();
-		p.init(round, units, scale);
+		p.init(units, digits, scale);
     ^ p;
 	}
 
 	init {
-		arg a_round = 0.01, a_units = '', a_scale = 1;
-		units = a_units;
-		scale = a_scale;
-		round = a_round;
+		arg a_units = "", a_digits = 3, a_scale = 1;
+		this.units = a_units;
+		this.scale = a_scale;
+		this.digits = a_digits;
     ^ this;
 	}
+
+  /**
+   * Note: setting digits to nil or 0 disables SI/sn notation.
+   */
+  digits_ {
+    arg a_digits;
+    digits = a_digits.defaultWhenNil(0).asFloat();
+  }
+
+  units_ {
+    arg a_units;
+    units = a_units.defaultWhenNil("").asString();
+  }
+
+  scale_ {
+    arg a_scale;
+    scale = a_scale.defaultWhenNil(1).asFloat();
+  }
 
   map {
 		arg n;
     var s;
     n = this.getFromParam(n);
-		s = this.shorten(n * scale);
+		s = this.shorten(n * scale) ++ units;
     ^ s;
   }
 
@@ -41,6 +68,7 @@ SS2ParamDisplay : Object {
 	unmap {
 		arg param, n;
 		param.value = this.parse(n);
+    ^ this;
 	}
 
   // Based on the value of n, return a +/- prefix.
@@ -64,42 +92,54 @@ SS2ParamDisplay : Object {
 		^ "";
 	}
 
-  // Take huge values like 1,500,000 and display like 1.5M
+  /**
+   * Shorten large values for display.
+   */
   shorten {
-    arg n = 0, significantDigits = 4;
-    var prefix, s;
+    arg n = 0, significantDigits = nil;
+    var base, s, log10, si;
     n = this.getFromParam(n);
-    this.compressPrefixes().do {
-      arg testPrefix;
-      if (n >= testPrefix[0]) {
-        prefix = testPrefix;
+    significantDigits = significantDigits.defaultWhenNil(digits).asFloat();
+    [n, significantDigits].postln;
+
+    if (n.abs == inf) {
+      ^ this.posneg(n) ++ "∞";
+    };
+
+    if (significantDigits > 0) {
+      log10 = if (n == 0) { 1 } { n.abs.log10.floor };
+
+      // Fallback for scientific notation outside of SI prefixes.
+      if (log10 == log10.clip(minSiIndex, maxSiIndex)) {
+        si = this.siPrefixes.detect({ |c| (c[0] <= log10) });
+      } {
+        si = [log10, "e" ++ log10.asString()];
       };
-    };
+      [si, log10].postln;
+      base = n.abs / (10 ** si[0]);
 
-    // Handle when n is too small/big for all prefixes.
-    if (prefix.isNil) {
-      prefix = [1, ""];
-    };
+      // Round to significantDigits;
+      base = base.round(10 ** (significantDigits - base.log10.floor - 1).neg);
 
-    // Finally we can apply the prefix!
-    n = (n/prefix[0]);
-    n = n.asFloat().round(round);
-    s = if (n < 1000) {
-      this.posneg(n) ++ n.abs.asStringPrec(significantDigits);
+      s = this.posneg(n) ++ base.asString() ++ si[1];
+      ^ s;
     } {
-      this.posneg(n) ++ n.abs.asStringPrec(significantDigits + n.log10.floor);
+      s = this.posneg(n) ++ n.abs.asString();
+      ^ s;
     };
-    s = s ++ prefix[1] ++ units.asString();
-    ^ s;
   }
 
 
-  // Return a value based on a string that looks like the display.
-  // Similar to the opposite of SS2ParamDisplay::shorten
+  /**
+   * Parse a string, and return a float value. This checks for special posneg
+   * strings, SI units, exponentials, and units. It is fairly good at tossing
+   * out extraneous data.
+   */
   parse {
     arg s;
-    var n, prefix, matchPrefix;
+    var n, prefix, matchSi;
     s = s.asString();
+    s = s.replace("∞", "inf");
     s = s.replace(posString.asString(), "");
     s = s.replace(negString.asString(), "-");
     s = s.replace(zeroString.asString(), "");
@@ -109,33 +149,50 @@ SS2ParamDisplay : Object {
 
     n = s.asFloat() / scale;
 
-    // Match the prefix units
-    matchPrefix = s.findRegexp("[0-9]([a-zA-Z])");
-    if (matchPrefix.isArray && matchPrefix[0].size > 1) {
-      matchPrefix = matchPrefix[0][1][1].asString;
-      prefix = this.compressPrefixes().select {
-        arg testPrefix;
-        testPrefix[1] == matchPrefix;
-      };
-      if (prefix.size > 0) {
-        n = n * prefix[0][0];
-      };
+    prefix = this.parseSi(s);
+    if (prefix.isNil.not) {
+      n = n * (10 ** prefix[0]);
     };
+
     ^n;
   }
 
-  compressPrefixes {
+  /**
+   * Find if any SI characters follow the digits, return array as in siPrefixes
+   * @param s <string>
+   *   A string that can be parsed as a number, ie "-5.33ns" (ns = nansec).
+   * @return array
+   *   Returns an array from siPrefixes in format [<log10>, <string>]
+   */
+  parseSi {
+    arg s;
+    var si, matchSi;
+    matchSi = s.findRegexp("[0-9]([a-zA-Z])");
+    if (matchSi.isArray && matchSi[0].size > 1) {
+      matchSi = matchSi[0][1][1].asString;
+      si = this.siPrefixes().detect { |test| test[1] == matchSi; };
+    };
+    ^ si;
+  }
+
+  /**
+   * Get Systèm International list, in format [<log10>, <string>].
+   */
+  siPrefixes {
     ^ [
-      [0.000000001, "n"],
-      [0.000001, "µ"],
-      [0.001, "m"],
-      [1, ""],
-      [1000, "K"],
-      [1000000, "M"],
-      [1000000000, "G"],
+      [9, "G"],
+      [6, "M"],
+      [3, "K"],
+      [0, ""],
+      [-3, "m"],
+      [-6, "µ"],
+      [-9, "n"],
     ];
   }
 
+  /**
+   * This kind of display is never centered.
+   */
   centered {
     ^ false;
   }

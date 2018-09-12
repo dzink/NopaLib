@@ -1,4 +1,4 @@
-TestSS2ParamDisplaySemitone : UnitTest {
+TestSS2ParamDisplaySemitone : TestSS2ParamDisplay {
   var param;
   var display;
 

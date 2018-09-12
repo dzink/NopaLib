@@ -1,17 +1,24 @@
+/**
+ * SS2ParamDisplayDb: A class to help convert params into human-readable
+ * decibels based on attenuation ratios - i.e. 0.5 is the ratio for -6dB,
+ * so "-6.02dB", 2 is "+6.02dB", etc.
+ */
+
+
 SS2ParamDisplayDb : SS2ParamDisplay {
 
   *new {
-		arg round = 0.01, scale = 1;
+		arg digits = 3, scale = 1;
 		var p = super.new();
-		p.init(round, scale);
+		p.init(digits, scale);
     ^ p;
 	}
 
 	init {
-		arg a_round = 0.01, a_scale = 1;
-		scale = a_scale;
-		round = a_round;
-		units = "dB";
+		arg a_digits = 3, a_scale = 1;
+    this.digits = a_digits;
+		this.units = "dB";
+		this.scale = a_scale;
     ^ this;
 	}
 
@@ -19,13 +26,14 @@ SS2ParamDisplayDb : SS2ParamDisplay {
 		arg n;
     var s;
     n = this.getFromParam(n).abs.ampdb();
-		s = this.shorten(n * scale);
+		s = this.shorten(n * scale) ++ units;
     ^ s;
   }
 
 	unmap {
 		arg param, n;
 		param.value = this.parse(n).dbamp;
+    ^ this;
 	}
 
 	getFromParam {

@@ -4,6 +4,7 @@ SS2ParamWidget {
 	var <labelText;
 	var <valueText;
 	var <composite;
+	var <param;
 
 	var param;
 
@@ -21,6 +22,13 @@ SS2ParamWidget {
 		^ this;
 	}
 
+	param_ {
+		arg a_param;
+		param = a_param;
+		this.setPropertiesFromParam(param);
+		^ this;
+	}
+
 	buildWidget {
 		arg container;
 		composite = CompositeView(container, 52@96);
@@ -30,10 +38,9 @@ SS2ParamWidget {
 		labelText = StaticText(composite, 48@8);
 		valueText = StaticText(composite, 48@14);
 		textField = TextField(composite, 48@10);
-		this.buildKnob();
-		this.buildLabelText();
-		this.buildValueText();
-		this.buildTextField();
+		if (param.isNil.not) {
+			this.resetBuildProperties();
+		};
 		^ this;
 	}
 
@@ -42,11 +49,26 @@ SS2ParamWidget {
 		^ this;
 	}
 
+	setPropertiesFromParam {
+		arg p;
+		p = p.defaultWhenNil(param);
+		if (p.isKindOf(SS2Param)) {
+			this.buildKnob(p);
+			this.buildLabelText(p);
+			this.buildValueText(p);
+			this.buildTextField(p);
+		} {
+			"Widget param should be a kind of SS2Param".warn;
+		};
+		^ this;
+	}
+
 	buildKnob {
-		knob.centered_(param.displayStrategy.centered)
+		arg p;
+		knob.centered_(p.displayStrategy.centered)
 			.action_({
 				arg a_knob;
-				param.normalized = a_knob.value;
+				p.normalized = a_knob.value;
 				this.syncToParam();
 			})
 			.keyDownAction_({
@@ -57,14 +79,16 @@ SS2ParamWidget {
 	}
 
 	buildLabelText {
-		labelText.string_(param.label)
+		arg p;
+		labelText.string_(p.label)
 			.align_(\center)
 			.font_(Font("Helvetica",9));
 		^ this;
 	}
 
 	buildValueText {
-		valueText.string_(param.display)
+		arg p;
+		valueText.string_(p.display)
 			.align_(\center)
 			.font_(Font("Helvetica",9))
 			.mouseDownAction_(this.textFieldAppearAction);
@@ -72,13 +96,14 @@ SS2ParamWidget {
 	}
 
 	buildTextField {
+		arg p;
 		textField.font_(Font("Helvetica",11))
-			.string_(param.display)
-			.focusLostAction_(this.textFieldSubmitAction)
+			.string_(p.display)
+			.focusLostAction_(this.textFieldSubmitAction(p))
 			.keyDownAction_({
 				arg doc, char, mod, unicode, keycode, key;
 				if (key == 16777220) {
-					this.textFieldSubmitAction.(textField);
+					this.textFieldSubmitAction(p).(textField);
 				};
 			})
 			.bounds_(valueText.bounds)
@@ -94,12 +119,13 @@ SS2ParamWidget {
 	}
 
 	textFieldSubmitAction {
+		arg p;
 		^ {
 			arg a_textField;
-			param.display = a_textField.value;
+			p.display = a_textField.value;
 			this.syncToParam();
-			textField.string_(param.display).visible_(false);
-			valueText.string_(param.display).visible_(true);
+			textField.string_(p.display).visible_(false);
+			valueText.string_(p.display).visible_(true);
 		};
 	}
 

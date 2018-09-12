@@ -1,4 +1,4 @@
-TestSS2ParamDisplayNormalized : UnitTest {
+TestSS2ParamDisplayNormalized : TestSS2ParamDisplay {
   var param;
   var display;
 

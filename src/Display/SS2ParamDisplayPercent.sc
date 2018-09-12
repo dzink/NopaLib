@@ -1,16 +1,16 @@
 SS2ParamDisplayPercent : SS2ParamDisplayNormalized {
   *new {
-    arg round = 0.01, centered = false;
+    arg digits = 3, centered = false;
     var p = super.new();
-    p.init(round, centered);
+    p.init(digits, centered);
     ^ p;
   }
 
   init {
-    arg a_round = 0.01, a_centered = false;
-    round = a_round;
-    units = "%";
-    scale = 100;
+    arg a_digits = 3, a_centered = false;
+    this.digits = a_digits;
+		this.units = "%";
+		this.scale = 100;
     centered = a_centered;
     ^ this;
   }

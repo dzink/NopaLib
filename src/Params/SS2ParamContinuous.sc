@@ -1,25 +1,34 @@
-/**
- * An trivial abstract class where normalized is the same as value.
- */
-
-SS2Param : Object {
-  var <normalized, <value;
-  var >displayStrategy;
-  var <>label;
-  var <>action;
-  var widgets;
+SS2ParamContinuous : SS2Param {
+  var <controlSpec;
+  var <round;
 
   const <midiMax = 127.0;
   const <midiMin = 0.0;
   const <initMidi = 63.5;
 
+  /**
+   * @param min Float
+   *   The number value will represent at normalized = 0.
+   * @param max Float
+   *   The number value will represent at normalized = 1.
+   * @param warp Mixed
+   *   \lin is a linear warp, \exp is an exponential warp, Floats will create
+   *   a curve.
+   * @param round Float
+   *   The amount to round value to.
+   */
   *new {
+    arg min = 0, max = 1, warp = 0, round = 0.0001;
     var p = super.new();
-    p.init();
+    p.init(a_min: min, a_max: max, a_warp: warp, a_round: round);
     ^ p;
   }
 
   init {
+    arg a_min = 0, a_max = 1, a_warp = \lin, a_round = 0.0001;
+    controlSpec = ControlSpec(minval: a_min, maxval: a_max, warp: a_warp);
+    round = a_round;
+    this.normalized = 0;
     widgets = List[];
     ^ this;
   }
@@ -32,11 +41,36 @@ SS2Param : Object {
   }
 
   min {
-    ^ 0;
+    ^ controlSpec.minval;
+  }
+
+  min_ {
+    arg m;
+    controlSpec.minval = m;
+    this.recalculate;
+    ^ this;
   }
 
   max {
-    ^ 1;
+    ^ controlSpec.maxval;
+  }
+
+  max_ {
+    arg m;
+    controlSpec.maxval = m;
+    this.recalculate;
+    ^ this;
+  }
+
+  warp {
+    ^ controlSpec.warp;
+  }
+
+  warp_ {
+    arg w;
+    controlSpec.warp = w;
+    this.recalculate;
+    ^ this;
   }
 
   /**
@@ -54,7 +88,7 @@ SS2Param : Object {
       } {
         v.clip(max, min);
       };
-      normalized = value;
+      normalized = this.unmap(value);
       if (performAction) {
         this.performAction();
         this.syncWidgets();
@@ -75,7 +109,7 @@ SS2Param : Object {
     arg n, performAction = true, recalculate = false;
     if (n != normalized || recalculate) {
       normalized = n.clip(0, 1);
-      value = this.map(n);
+      value = this.map(n).round(round);
       if (performAction) {
         this.performAction();
         this.syncWidgets();
@@ -84,10 +118,13 @@ SS2Param : Object {
     ^ this;
   }
 
+  /**
+   * Map from the controlSpec.
+   */
   map {
     arg n;
     n = n.defaultWhenNil(normalized);
-    ^ n;
+    ^ controlSpec.map(n);
   }
 
   /**
@@ -96,7 +133,7 @@ SS2Param : Object {
   unmap {
     arg v;
     v = v.defaultWhenNil(value);
-    ^ v;
+    ^ controlSpec.unmap(v).round(round);
   }
 
 
@@ -174,6 +211,9 @@ SS2Param : Object {
     ^ this;
   }
 
+
+
+
   /**
    * Displays a human-readable version of this param (or an optional value).
    */
@@ -198,14 +238,14 @@ SS2Param : Object {
   * Displays a human-readable value using a temporary displayStrategy.
   */
   displayAs {
-    arg a_display, n = nil;
-    n = n.defaultWhenNil(this);
-    ^ a_display.map(n);
+  arg a_display, n = nil;
+  n = n.defaultWhenNil(this);
+  ^ a_display.map(n);
   }
 
   displayStrategy {
-    this.ensureDefaultDisplay();
-    ^ displayStrategy;
+  this.ensureDefaultDisplay();
+  ^ displayStrategy;
   }
 
   /**
@@ -234,10 +274,6 @@ SS2Param : Object {
     ^ a.value(this);
   }
 
-  widgets {
-    ^ widgets.defaultWhenNil(List[]);
-  }
-
   /**
    * Register a widget to be synced to this Parameter's value.
    * @param w SS2ParamWidget
@@ -246,7 +282,7 @@ SS2Param : Object {
    */
   registerWidget {
     arg w, setProperties = false;
-    widgets = this.widgets.add(w);
+    widgets = widgets.add(w);
     if (w.param.isNil && setProperties) {
       w.param = this;
       w.setPropertiesFromParam(this);
@@ -256,12 +292,12 @@ SS2Param : Object {
 
   deregisterWidget {
     arg w;
-    widgets = this.widgets.remove(w);
+    widgets = widgets.remove(w);
     ^ this;
   }
 
   syncWidgets {
-    this.widgets.do {
+    widgets.do {
       arg w;
       w.syncToParam();
     }
@@ -273,7 +309,7 @@ SS2Param : Object {
    */
   import {
     arg n;
-    this.value = n.defaultWhenNil(0).asFloat();
+    this.normalized = n.defaultWhenNil(0).asFloat();
     ^ this;
   }
 

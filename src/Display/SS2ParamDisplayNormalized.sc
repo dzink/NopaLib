@@ -1,17 +1,17 @@
 SS2ParamDisplayNormalized : SS2ParamDisplayCenterable {
 
 	*new {
-		arg round = 0.01, units = "", scale = 1, centered = false;
+		arg units = "", digits = 0, scale = 1, centered = false;
 		var p = super.new();
-		p.init(round, units, scale, centered);
+		p.init(units, digits, scale, centered);
 		^ p;
 	}
 
 	init {
-		arg a_round = 0.01, a_units = "", a_scale = 1, a_centered = false;
-		round = a_round;
-		units = a_units;
-		scale = a_scale;
+		arg a_units = "", a_digits = 0, a_scale = 1, a_centered = false;
+		this.digits = a_digits;
+		this.units = a_units;
+		this.scale = a_scale;
 		centered = a_centered;
 		^ this;
 	}
@@ -20,7 +20,7 @@ SS2ParamDisplayNormalized : SS2ParamDisplayCenterable {
 		arg n;
 		var s;
 		n = this.getFromParam(n).linlin(0, 1, this.lowerBound(), 1) * scale;
-		s = this.shorten(n);
+		s = this.shorten(n) ++ units;
 		^ s;
 	}
 

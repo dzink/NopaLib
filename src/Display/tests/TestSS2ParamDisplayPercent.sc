@@ -1,4 +1,4 @@
-TestSS2ParamDisplayPercent : UnitTest {
+TestSS2ParamDisplayPercent : TestSS2ParamDisplay {
   var display;
 
   setUp {
