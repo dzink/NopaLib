@@ -1,4 +1,4 @@
-SS2ParamMirror : SS2Param {
+SS2ParamMirror : SS2ParamContinuous {
   const <centerBuffer = 0.015748031496063;
 
   *new {
@@ -17,17 +17,20 @@ SS2ParamMirror : SS2Param {
     };
 
     round = a_round;
-    this.normalized = 0.5;
+    this.normalized_(0.5, true, true);
     value = this.map();
     ^ this;
   }
 
 
   value_ {
-    arg v;
+    arg v, performAction = true;
     var max = this.max();
     value = v.clip(max.neg, max);
     normalized = this.unmap(v);
+    if (performAction) {
+      this.act();
+    };
     ^ this;
   }
 

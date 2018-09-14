@@ -6,6 +6,9 @@
 
 SS2ParamDisplaySemitone : SS2ParamDisplayCenterable {
 
+  const maxSiIndex = 0;
+  const minSiIndex = -2;
+
   *new {
 		arg digits = 3, scale = 1;
 		var p = super.new();
@@ -25,7 +28,7 @@ SS2ParamDisplaySemitone : SS2ParamDisplayCenterable {
 		arg n;
     var s;
     n = this.getFromParam(n).ratiomidi().round(0.00001);
-		s = this.shorten(n * scale) ++ units;
+		s = this.shorten(n * scale);
     ^ s;
   }
 
@@ -45,4 +48,14 @@ SS2ParamDisplaySemitone : SS2ParamDisplayCenterable {
 	posString {
 		^ "+";
 	}
+
+  /**
+   * Prefixes are steps and cents.
+   */
+  siPrefixes {
+    ^ [
+      [0, "st"],
+      [-2, "c"],
+    ];
+  }
 }

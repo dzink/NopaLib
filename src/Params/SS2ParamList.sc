@@ -1,23 +1,19 @@
 SS2ParamList : SS2Param {
   var <symbols;
-  var value;
   var normalScale;
 
   *new {
-    arg symbols, min = 0, max = 1, warp = \lin;
+    arg symbols = [];
     var p;
     p = super.new();
-    p.init(a_symbols: symbols, a_min: min, a_max: max, a_warp: warp);
+    p.init(a_symbols: symbols);
     ^ p;
   }
 
   init {
-    arg a_symbols, a_min = 0, a_max = 1, a_warp = \lin, a_round = 0;
-    controlSpec = ControlSpec(minval: a_min, maxval: a_max, warp: a_warp);
+    arg a_symbols = [];
     this.symbols = a_symbols;
-    round = 0;
-    normalized = 0;
-    this.recalculate();
+    this.normalized_(0, true, true);
     ^ this;
   }
 
@@ -48,7 +44,6 @@ SS2ParamList : SS2Param {
   index_ {
     arg i;
     this.normalized = i.floor.clip(0, this.lastIndex).linlin(0, this.lastIndex, 0, normalScale);
-    [i, normalized, normalScale].postln;
     ^ this;
   }
 
@@ -58,15 +53,14 @@ SS2ParamList : SS2Param {
     arg n;
     n = n.defaultWhenNil(normalized);
     n = (n * normalScale.reciprocal).trunc((this.size + 1).reciprocal);
-    ^ controlSpec.map(n);
+    ^ n;
   }
 
   unmap {
     arg v;
     var n;
     v = v.defaultWhenNil(value);
-    n = controlSpec.unmap(v);
-    n = n * normalScale;
+    n = (v * normalScale).trunc(this.size.reciprocal);
     ^ n;
   }
 
@@ -96,5 +90,14 @@ SS2ParamList : SS2Param {
 
   lastIndex {
     ^ symbols.defaultWhenNil([]).size.asFloat() - 1;
+  }
+
+
+  min {
+    ^ 0;
+  }
+
+  max {
+    ^ this.lastIndex;
   }
 }

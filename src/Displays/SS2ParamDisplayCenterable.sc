@@ -22,4 +22,8 @@ SS2ParamDisplayCenterable : SS2ParamDisplay {
 		^ if (centered) { "+"; } { ""; };
 	}
 
+	lowerBound {
+		^ if (centered) { -1 } { 0 };
+	}
+
 }

@@ -7,7 +7,8 @@ SS2Param : Object {
   var >displayStrategy;
   var <>label;
   var <>action;
-  var widgets;
+  var observers;
+  var events;
 
   const <midiMax = 127.0;
   const <midiMin = 0.0;
@@ -20,14 +21,8 @@ SS2Param : Object {
   }
 
   init {
-    widgets = List[];
-    ^ this;
-  }
-
-  round_ {
-    arg r;
-    round = r;
-    this.recalculate;
+    observers = List[];
+    this.normalized_(0, true, true);
     ^ this;
   }
 
@@ -54,10 +49,9 @@ SS2Param : Object {
       } {
         v.clip(max, min);
       };
-      normalized = value;
+      normalized = this.unmap(value);
       if (performAction) {
-        this.performAction();
-        this.syncWidgets();
+        this.act();
       };
     }
     ^ this;
@@ -77,8 +71,7 @@ SS2Param : Object {
       normalized = n.clip(0, 1);
       value = this.map(n);
       if (performAction) {
-        this.performAction();
-        this.syncWidgets();
+        this.act();
       };
     }
     ^ this;
@@ -226,6 +219,11 @@ SS2Param : Object {
     stream << this.display();
   }
 
+  act {
+    this.performAction();
+    this.runObservers(this);
+  }
+
   /**
    * Performs the function registered in action.
    */
@@ -234,37 +232,62 @@ SS2Param : Object {
     ^ a.value(this);
   }
 
-  widgets {
-    ^ widgets.defaultWhenNil(List[]);
+  observers {
+    ^ observers.defaultWhenNil(List[]);
   }
 
   /**
-   * Register a widget to be synced to this Parameter's value.
-   * @param w SS2ParamWidget
+   * Register an observer to be synced to this Parameter's value.
+   * @param w SS2ParamObserver
    * @param setProperties boolean
    *   If true, will set w's properties to match this parameter.
    */
-  registerWidget {
-    arg w, setProperties = false;
-    widgets = this.widgets.add(w);
-    if (w.param.isNil && setProperties) {
-      w.param = this;
-      w.setPropertiesFromParam(this);
+  registerObserver {
+    arg w, setProperties = true;
+    observers = this.observers.add(w);
+    if (setProperties) {
+      w.register(this);
     }
     ^ this;
   }
 
-  deregisterWidget {
+  deregisterObserver {
     arg w;
-    widgets = this.widgets.remove(w);
+    observers = this.observers.remove(w);
     ^ this;
   }
 
-  syncWidgets {
-    this.widgets.do {
-      arg w;
-      w.syncToParam();
+  events {
+    ^ events.defaultWhenNil(List[]);
+  }
+
+  /**
+   * Register an event.
+   * @param e SS2ParamEvent
+   * @param setProperties boolean
+   *   If true, will set e's properties to match this parameter.
+   */
+  registerEvent {
+    arg e, setProperties = true;
+    events = this.events.add(w);
+    if (setProperties) {
+      e.register(this);
     }
+    ^ this;
+  }
+
+  deregisterEvent {
+    arg e;
+    events = this.events.remove(e);
+    ^ this;
+  }
+
+  enableEvents {
+    arg enabled;
+    this.events.do {
+      arg e;
+      e.enabled = enabled
+    };
     ^ this;
   }
 

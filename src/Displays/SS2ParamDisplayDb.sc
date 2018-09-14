@@ -8,14 +8,14 @@
 SS2ParamDisplayDb : SS2ParamDisplay {
 
   *new {
-		arg digits = 3, scale = 1;
+		arg digits = 2, scale = 1;
 		var p = super.new();
 		p.init(digits, scale);
     ^ p;
 	}
 
 	init {
-		arg a_digits = 3, a_scale = 1;
+		arg a_digits = 2, a_scale = 1;
     this.digits = a_digits;
 		this.units = "dB";
 		this.scale = a_scale;
@@ -26,7 +26,7 @@ SS2ParamDisplayDb : SS2ParamDisplay {
 		arg n;
     var s;
     n = this.getFromParam(n).abs.ampdb();
-		s = this.shorten(n * scale) ++ units;
+		s = (n * scale).round(10 ** digits.neg).asString() ++ units;
     ^ s;
   }
 
@@ -59,4 +59,13 @@ SS2ParamDisplayDb : SS2ParamDisplay {
 	zeroString {
 		^ "+";
 	}
+
+  /**
+   * Prefixes are steps and cents.
+   */
+  siPrefixes {
+    ^ [
+      [0, ""],
+    ];
+  }
 }

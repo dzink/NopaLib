@@ -1,25 +1,30 @@
 SS2ParamListValues : SS2ParamList {
-  var <symbols;
   var <values;
+  var normalScale;
 
   *new {
     arg symbols = [], values = [];
     var p;
-    p = super.new(symbols: symbols);
+    p = super.new();
     p.values = values;
     p.init(a_symbols: symbols, a_values: values);
     ^ p;
   }
 
+  *fromPairs {
+    arg pairs = [];
+    var symbols, values;
+    #symbols, values = pairs.unlace(2);
+    ^ SS2ParamListValues(symbols, values);
+  }
+
   // @TODO: a_min = 0, a_max = 0, a_warp = 0, a_round = 0 are dummies to
   // prevent an annoying warning.
   init {
-    arg a_symbols = [], a_values = [], a_min = 0, a_max = 0, a_warp = 0, a_round = 0;
-    controlSpec = ControlSpec(minval: a_min, maxval: a_max, warp: a_warp);
+    arg a_symbols = [], a_values = [];
     this.symbols = a_symbols;
     this.values = a_values;
-    round = 0;
-    normalized = 0;
+    this.normalized_(0, true, true);
     this.recalculate();
     ^ this;
   }
@@ -31,8 +36,7 @@ SS2ParamListValues : SS2ParamList {
     var i;
     if (values.size > 0) {
       n = n.defaultWhenNil(normalized);
-      n = n * (symbols.size / (symbols.size - 1));
-      i = this.index(n.round(1));
+      i = this.index(n);
       ^ values[i];
     } {
       ^ 0;
@@ -48,7 +52,7 @@ SS2ParamListValues : SS2ParamList {
       ("Value not found in SS2ParamListValues.").warn;
       ^ normalized;
     } {
-      n = i / symbols.size;
+      n = (i / this.size).trunc(this.size.reciprocal);
       ^ n;
     };
   }
@@ -60,17 +64,20 @@ SS2ParamListValues : SS2ParamList {
   }
 
   value_ {
-    arg v;
+    arg v, performAction = true;
     value = v;
     normalized = this.unmap(value);
+    if (performAction) {
+      this.act();
+    };
     ^ this;
   }
 
   min {
-    ^ values.min;
+    ^ values.minItem;
   }
 
   max {
-    ^ values.max;
+    ^ values.maxItem;
   }
 }

@@ -1,12 +1,9 @@
-SS2ParamWidget {
+SS2ParamWidget : SS2ParamObserver {
 	var <textField;
 	var <knob;
 	var <labelText;
 	var <valueText;
 	var <composite;
-	var <param;
-
-	var param;
 
 	*new {
 		arg container, param, register = false;
@@ -16,21 +13,19 @@ SS2ParamWidget {
 	}
 
 	init {
-		arg container, a_param;
-		param = a_param;
-		this.buildWidget(container);
+		arg container, param;
+		this.buildWidget(container, param);
 		^ this;
 	}
 
 	param_ {
-		arg a_param;
-		param = a_param;
+		arg param;
 		this.setPropertiesFromParam(param);
 		^ this;
 	}
 
 	buildWidget {
-		arg container;
+		arg container, param = nil;
 		composite = CompositeView(container, 52@96);
 		this.buildComposite();
 
@@ -39,7 +34,8 @@ SS2ParamWidget {
 		valueText = StaticText(composite, 48@14);
 		textField = TextField(composite, 48@10);
 		if (param.isNil.not) {
-			this.resetBuildProperties();
+			this.register(param);
+			this.observe(param);
 		};
 		^ this;
 	}
@@ -49,14 +45,14 @@ SS2ParamWidget {
 		^ this;
 	}
 
-	setPropertiesFromParam {
-		arg p;
-		p = p.defaultWhenNil(param);
-		if (p.isKindOf(SS2Param)) {
-			this.buildKnob(p);
-			this.buildLabelText(p);
-			this.buildValueText(p);
-			this.buildTextField(p);
+	register {
+		arg param;
+		if (param.isKindOf(SS2Param)) {
+			this.buildKnob(param);
+			this.buildLabelText(param);
+			this.buildValueText(param);
+			this.buildTextField(param);
+			this.observe(param);
 		} {
 			"Widget param should be a kind of SS2Param".warn;
 		};
@@ -64,12 +60,12 @@ SS2ParamWidget {
 	}
 
 	buildKnob {
-		arg p;
-		knob.centered_(p.displayStrategy.centered)
+		arg param;
+		knob.centered_(param.displayStrategy.centered)
 			.action_({
 				arg a_knob;
-				p.normalized = a_knob.value;
-				this.syncToParam();
+				param.normalized = a_knob.value;
+				this.register(param);
 			})
 			.keyDownAction_({
 				arg doc, char, mod, unicode, keycode, key;
@@ -79,16 +75,16 @@ SS2ParamWidget {
 	}
 
 	buildLabelText {
-		arg p;
-		labelText.string_(p.label)
+		arg param;
+		labelText.string_(param.label)
 			.align_(\center)
 			.font_(Font("Helvetica",9));
 		^ this;
 	}
 
 	buildValueText {
-		arg p;
-		valueText.string_(p.display)
+		arg param;
+		valueText.string_(param.display)
 			.align_(\center)
 			.font_(Font("Helvetica",9))
 			.mouseDownAction_(this.textFieldAppearAction);
@@ -96,14 +92,14 @@ SS2ParamWidget {
 	}
 
 	buildTextField {
-		arg p;
+		arg param;
 		textField.font_(Font("Helvetica",11))
-			.string_(p.display)
-			.focusLostAction_(this.textFieldSubmitAction(p))
+			.string_(param.display)
+			.focusLostAction_(this.textFieldSubmitAction(param))
 			.keyDownAction_({
 				arg doc, char, mod, unicode, keycode, key;
 				if (key == 16777220) {
-					this.textFieldSubmitAction(p).(textField);
+					this.textFieldSubmitAction(param).(textField);
 				};
 			})
 			.bounds_(valueText.bounds)
@@ -119,20 +115,23 @@ SS2ParamWidget {
 	}
 
 	textFieldSubmitAction {
-		arg p;
+		arg param;
 		^ {
 			arg a_textField;
-			p.display = a_textField.value;
-			this.syncToParam();
-			textField.string_(p.display).visible_(false);
-			valueText.string_(p.display).visible_(true);
+			param.display = a_textField.value;
+			this.observe(param);
+			textField.string_(param.display).visible_(false);
+			valueText.string_(param.display).visible_(true);
 		};
 	}
 
-	syncToParam {
+	observe {
+		arg param;
+		[\observe, param.value, param.normalized, param.display].postln;
 		knob.value = param.normalized;
 		valueText.string_(param.display);
 		textField.string_(param.display);
+		^ this;
 	}
 
 }

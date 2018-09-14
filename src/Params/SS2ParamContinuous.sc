@@ -28,8 +28,7 @@ SS2ParamContinuous : SS2Param {
     arg a_min = 0, a_max = 1, a_warp = \lin, a_round = 0.0001;
     controlSpec = ControlSpec(minval: a_min, maxval: a_max, warp: a_warp);
     round = a_round;
-    this.normalized = 0;
-    widgets = List[];
+    this.normalized_(0, true, true);
     ^ this;
   }
 
@@ -90,8 +89,7 @@ SS2ParamContinuous : SS2Param {
       };
       normalized = this.unmap(value);
       if (performAction) {
-        this.performAction();
-        this.syncWidgets();
+        this.act();
       };
     }
     ^ this;
@@ -109,10 +107,9 @@ SS2ParamContinuous : SS2Param {
     arg n, performAction = true, recalculate = false;
     if (n != normalized || recalculate) {
       normalized = n.clip(0, 1);
-      value = this.map(n).round(round);
+      value = this.map(n);
       if (performAction) {
-        this.performAction();
-        this.syncWidgets();
+        this.act();
       };
     }
     ^ this;
@@ -124,7 +121,7 @@ SS2ParamContinuous : SS2Param {
   map {
     arg n;
     n = n.defaultWhenNil(normalized);
-    ^ controlSpec.map(n);
+    ^ controlSpec.map(n).round(round);
   }
 
   /**
@@ -133,7 +130,7 @@ SS2ParamContinuous : SS2Param {
   unmap {
     arg v;
     v = v.defaultWhenNil(value);
-    ^ controlSpec.unmap(v).round(round);
+    ^ controlSpec.unmap(v);
   }
 
 
@@ -145,180 +142,4 @@ SS2ParamContinuous : SS2Param {
     this.normalized_(normalized, recalculate: true);
     ^ this;
   }
-
-  /**
-   * @param n Float
-   *   A number (defaults to normalized)
-   * @return Float
-   *   n scaled to 0..127
-   */
-  midi {
-    arg n;
-    n = n.defaultWhenNil(normalized);
-    ^ n.linlin(0, 1, midiMin, midiMax);
-  }
-
-  /**
-   * @param m Float
-   *   A MIDI number 0..127.
-   * @return Float
-   *   A corresponding normalized number.
-   */
-  normalizeMidi {
-    arg m = 0;
-    ^ m.linlin(midiMin, midiMax, 0, 1);
-  }
-
-  /**
-   * @param m Float
-   *   A MIDI number 0..127.
-   * @return Float
-   *   A corresponding value.
-   */
-  midiMap {
-    arg m = 0;
-    ^ this.map(this.normalizeMidi(m));
-  }
-
-  /**
-   * @param v Float
-   *   A value.
-   * @return Float
-   *   A MIDI number 0..127.
-   */
-  midiUnmap {
-    arg v;
-    v = v.defaultWhenNil(value);
-    ^ this.midi(this.unmap(v));
-  }
-
-  /**
-   * Sets normalized via a MIDI input.
-   */
-  midi_ {
-    arg m;
-    this.normalized = this.normalizeMidi(m);
-    ^ this;
-  }
-
-  /**
-   * Add/subtract a given MIDI step to normalized.
-   */
-  incrementMidi {
-    arg n = 1;
-    var m = this.midi + n;
-    this.midi = m;
-    ^ this;
-  }
-
-
-
-
-  /**
-   * Displays a human-readable version of this param (or an optional value).
-   */
-  display {
-    arg n = nil;
-    this.ensureDefaultDisplay();
-    n = n.defaultWhenNil(this);
-    ^ displayStrategy.map(n);
-  }
-
-  /**
-   * Sets this param to the given string input.
-   */
-  display_ {
-    arg n;
-    this.ensureDefaultDisplay();
-    this.displayStrategy.unmap(this, n);
-    ^ this;
-  }
-
-  /**
-  * Displays a human-readable value using a temporary displayStrategy.
-  */
-  displayAs {
-  arg a_display, n = nil;
-  n = n.defaultWhenNil(this);
-  ^ a_display.map(n);
-  }
-
-  displayStrategy {
-  this.ensureDefaultDisplay();
-  ^ displayStrategy;
-  }
-
-  /**
-   * Makes sure there's at least a basic displayStrategy before attempting to
-   * display values.
-   */
-  ensureDefaultDisplay {
-    if (displayStrategy.isNil) {
-      this.displayStrategy_(SS2ParamDisplay());
-    };
-  }
-
-  /**
-   * When streamed to output, show the display value.
-   */
-  printOn {
-    arg stream;
-    stream << this.display();
-  }
-
-  /**
-   * Performs the function registered in action.
-   */
-  performAction {
-    var a = action.defaultWhenNil({});
-    ^ a.value(this);
-  }
-
-  /**
-   * Register a widget to be synced to this Parameter's value.
-   * @param w SS2ParamWidget
-   * @param setProperties boolean
-   *   If true, will set w's properties to match this parameter.
-   */
-  registerWidget {
-    arg w, setProperties = false;
-    widgets = widgets.add(w);
-    if (w.param.isNil && setProperties) {
-      w.param = this;
-      w.setPropertiesFromParam(this);
-    }
-    ^ this;
-  }
-
-  deregisterWidget {
-    arg w;
-    widgets = widgets.remove(w);
-    ^ this;
-  }
-
-  syncWidgets {
-    widgets.do {
-      arg w;
-      w.syncToParam();
-    }
-    ^ this;
-  }
-
-  /**
-   * Import a value from string. Should be trivial in most subclasses.
-   */
-  import {
-    arg n;
-    this.normalized = n.defaultWhenNil(0).asFloat();
-    ^ this;
-  }
-
-  /**
-   * Export a value to a string. Should be trivial in most subclasses.
-   */
-  export {
-    arg n;
-    ^ normalized.asString;
-  }
-
 }

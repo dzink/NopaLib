@@ -37,8 +37,4 @@ SS2ParamDisplayNormalized : SS2ParamDisplayCenterable {
 		^ n;
 	}
 
-	lowerBound {
-		^ if (centered) { -1 } { 0 };
-	}
-
 }

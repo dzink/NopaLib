@@ -1,8 +1,8 @@
-TestSS2Param : TestSS2ParamMeta {
+TestSS2SS2ParamContinuous : TestSS2ParamMeta {
   var param;
 
   setUp {
-    param = SS2Param(5, 10, \lin, 0.1);
+    param = SS2ParamContinuous(5, 10, \lin, 0.1);
   }
 
   tearDown {

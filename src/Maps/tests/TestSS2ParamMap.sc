@@ -3,11 +3,10 @@ TestSS2ParamMap : UnitTest {
 
   setUp {
     paramMap = SS2ParamMap[
-      \a -> SS2Param(5, 10, 0.1, 'sec'),
+      \a -> SS2ParamContinuous(5, 10, 0.1, 'sec'),
       \b -> SS2ParamCurve(5, 10, 4, 0.1, 'sec'),
       \c -> SS2ParamMod(0, 10, 4, 1, 'sec'),
       \d -> SS2ParamList.fromPairs([\low, 1, \mid, 4, \high, 10], 'sec'),
-      \e -> 25,
     ];
   }
 
@@ -18,20 +17,13 @@ TestSS2ParamMap : UnitTest {
   test_new {
     [\a, \b, \c, \d].do {
       arg key;
+      paramMap.setMidi(key, 63.5);
       this.assert(paramMap.at(key).isNil.not, 'Sets key \\' ++ key.asString);
       this.assert(paramMap[key].isKindOf(SS2Param), 'Has an SS2Param at \\' ++ key.asString);
       this.assertFloatEquals(63.5, paramMap[key].getMidi, 'Midi is 63.5 at \\' ++ key.asString);
     };
 
     this.assert(paramMap.at(\e).isNil, 'Does not add non-SS2Params');
-  }
-
-  test_initAll {
-  paramMap.initAll(80);
-  [\a, \b, \c, \d].do {
-    arg key;
-      this.assertFloatEquals(80, paramMap[key].getMidi, 'initAll sets midi to 80 at \\' ++ key.asString);
-    };
   }
 
   test_importAll {

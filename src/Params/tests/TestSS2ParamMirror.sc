@@ -1,4 +1,4 @@
-TestSS2ParamMirror : TestSS2Param {
+TestSS2ParamMirror : TestSS2ParamMeta {
   var param;
 
   setUp {

@@ -1,4 +1,4 @@
-TestSS2ParamListValues : TestSS2Param {
+TestSS2ParamListValues : TestSS2ParamMeta {
   var param;
 
   setUp {
