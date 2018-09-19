@@ -9,7 +9,6 @@ SS2ParamMap : IdentityDictionary {
   *new {
     arg n = 8;
     var p = super.new(n);
-    p = p.initAll;
     ^ p;
   }
 
@@ -35,8 +34,8 @@ SS2ParamMap : IdentityDictionary {
     args = args.defaultWhenNil(this.keys);
     args.do {
       arg key;
-      array.add(key);
-      array.add(this[key].value);
+      array = array.add(key);
+      array = array.add(this[key].value);
     };
     ^ array;
   }

@@ -1,23 +1,30 @@
 SS2MidiFunc {
 	var <>func;
+	var <>param;
 
 	*bend {
-		arg param, channel = nil, srcID = nil;
+		arg channel = nil, srcID = nil, param = nil;
 		var p = super.new();
 		p.func = MIDIFunc.bend({
 			arg val = 0;
-			param.normalized = val / 16383.0;
+			p.normalized = val / 16383.0;
 		}, channel, srcID);
+		if (param.isNil.not) {
+			p.param = param;
+		};
 		^ p;
 	}
 
 	*cc {
-		arg param, ccNum = 0, channel = nil, srcID = nil;
+		arg ccNum = 0, channel = nil, srcID = nil, param = nil;
 		var p = super.new();
 		p.func = MIDIFunc.cc({
-			arg val = 0;
-			param.midi = val;
+			arg cc, val = 0;
+			p.midi_(val);
 		}, ccNum, channel, srcID);
+		if (param.isNil.not) {
+			p.param = param;
+		};
 		^ p;
 	}
 
@@ -38,6 +45,24 @@ SS2MidiFunc {
 		} {
 			this.disable;
 		};
+		^ this;
+	}
+
+	normalized_ {
+		arg n;
+		param.normalized = n;
+		^ this;
+	}
+
+	midi_ {
+		arg m;
+		param.midi = m;
+		^ this;
+	}
+
+	register {
+		arg a_param;
+		this.param = a_param;
 		^ this;
 	}
 }

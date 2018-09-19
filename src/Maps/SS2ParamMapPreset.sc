@@ -9,19 +9,19 @@ SS2ParamMapPreset : IdentityDictionary {
 	import {
 		arg map, args = nil;
 		args = args.defaultWhenNil(map.keys);
-		map.keysValuesDo {
-			arg key, param;
-			this.put(key, param.export);
+		args.do {
+			arg key;
+			this.put(key, map[key].export);
 		};
 		^ this;
 	}
 
 	export {
 		arg map, args = nil;
-		args = args.defaultWhenNil(this.keys);
-		map.keysValuesDo {
-			arg key, param;
-			param.import(this.at(key));
+		args = args.defaultWhenNil(map.keys);
+		args.do {
+			arg key;
+			map[key].import(this.at(key));
 		};
 		^ this;
 	}

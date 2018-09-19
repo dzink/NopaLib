@@ -225,7 +225,7 @@ SS2Param : Object {
   }
 
   /**
-   * Performs the function registered in action.
+   * Performs the function added in action.
    */
   performAction {
     var a = action.defaultWhenNil({});
@@ -242,7 +242,7 @@ SS2Param : Object {
    * @param setProperties boolean
    *   If true, will set w's properties to match this parameter.
    */
-  registerObserver {
+  addObserver {
     arg w, setProperties = true;
     observers = this.observers.add(w);
     if (setProperties) {
@@ -251,10 +251,17 @@ SS2Param : Object {
     ^ this;
   }
 
-  deregisterObserver {
+  removeObserver {
     arg w;
     observers = this.observers.remove(w);
     ^ this;
+  }
+
+  runObservers {
+    observers.do {
+      arg observer;
+      observer.observe(this);
+    }
   }
 
   events {
@@ -267,16 +274,16 @@ SS2Param : Object {
    * @param setProperties boolean
    *   If true, will set e's properties to match this parameter.
    */
-  registerEvent {
+  addEvent {
     arg e, setProperties = true;
-    events = this.events.add(w);
+    events = this.events.add(e);
     if (setProperties) {
       e.register(this);
     }
     ^ this;
   }
 
-  deregisterEvent {
+  removeEvent {
     arg e;
     events = this.events.remove(e);
     ^ this;
@@ -305,7 +312,7 @@ SS2Param : Object {
    */
   export {
     arg n;
-    ^ normalized.asString;
+    ^ value;
   }
 
 }

@@ -127,7 +127,6 @@ SS2ParamWidget : SS2ParamObserver {
 
 	observe {
 		arg param;
-		[\observe, param.value, param.normalized, param.display].postln;
 		knob.value = param.normalized;
 		valueText.string_(param.display);
 		textField.string_(param.display);

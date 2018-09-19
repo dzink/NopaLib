@@ -21,7 +21,6 @@ SS2ParamSemitone : SS2ParamContinuous {
   init {
     arg a_min = -24, a_max = 24, a_round = 1;
     controlSpec = ControlSpec(minval: a_min.midiratio, maxval: a_max.midiratio, warp: \exp);
-    [\cspec, a_min, controlSpec.minval, a_max, controlSpec.maxval].postln;
     round = a_round;
     this.normalized_(0, true, true);
     this.act();
@@ -38,7 +37,6 @@ SS2ParamSemitone : SS2ParamContinuous {
     arg n;
     n = n.defaultWhenNil(normalized);
     n = controlSpec.map(n);
-    [\map, n, controlSpec.minval].postln;
     ^ n.ratiomidi.round(round).midiratio;
   }
 

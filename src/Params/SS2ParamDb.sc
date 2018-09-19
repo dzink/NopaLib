@@ -45,4 +45,15 @@ SS2ParamDb : SS2ParamContinuous {
     ^ n.ampdb.round(round).dbamp;
   }
 
+  db {
+    arg n;
+    n = n.normalized(value);
+    ^ n.ampdb;
+  }
+
+  db_ {
+    arg db;
+    this.value = db.dbamp;
+  }
+
 }

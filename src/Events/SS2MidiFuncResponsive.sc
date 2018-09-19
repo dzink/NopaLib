@@ -1,4 +1,4 @@
-SS2MidiFuncResponsive : SS2MIDIFunc{
+SS2MidiFuncResponsive : SS2MidiFunc{
 	var <>func;
 	var lastMessageTime;
 	var lastMessageValue;
@@ -7,19 +7,29 @@ SS2MidiFuncResponsive : SS2MIDIFunc{
 	const maxTime = 0.25;
 	const minTime = 0.025;
 	const maxValue = 1;
+	const changeScale = 3;
 
 	*cc {
 		arg param, ccNum = 0, channel = nil, srcID = nil;
 		var p = super.new();
+		p.init();
+		p.func = p.ccFunc(param, ccNum, channel, srcID);
+		^ p;
+	}
+
+	init {
 		lastMessageTime = 0;
 		lastMessageValue = 0;
-		p.func = MIDIFunc.cc({
+	}
+
+	ccFunc {
+		arg param, ccNum = 0, channel = nil, srcID = nil;
+		this.func = MIDIFunc.cc({
 			arg cc, val;
 			val = lastMessageValue + this.midiFlex(val);
-			param.midi = val;
+			this.param.midi = val;
 			this.setCc(cc, val);
 		}, ccNum, channel, srcID);
-		^ p;
 	}
 
 	setCc {
@@ -42,11 +52,11 @@ SS2MidiFuncResponsive : SS2MIDIFunc{
 		arg val, now;
 		var timeDiff, valueDiff;
 		now = now.defaultWhenNil(SystemClock.seconds);
-		timeDiff = min(now - lastMessageTime, maxtime) / maxTime;
+		timeDiff = (now - lastMessageTime).clip(minTime, maxTime) / maxTime;
 		valueDiff = (val - lastMessageValue).clip(maxValue.neg, maxValue) / maxValue;
 		lastMessageTime = now;
 		lastMessageValue = now;
 
-		^ valueDiff * timeDiff.linexp(minTime, maxTime, 1, sensitivity.reciprocal) * changeScale;
+		^ valueDiff * timeDiff.linexp(minTime, maxTime, sensitivity, sensitivity.reciprocal) * changeScale;
 	}
 }
