@@ -6,7 +6,6 @@ SS2Param : Object {
   var <normalized, <value;
   var >displayStrategy;
   var <>label;
-  var <>action;
   var observers;
   var events;
 
@@ -37,11 +36,11 @@ SS2Param : Object {
   /**
    * Sets the parameter via value.
    * @param v Float
-   * @param performAction Boolean
-   *   If true, will perform the action in this.action.
+   * @param notifyObservers Boolean
+   *   If true, will notify observers.
    */
   value_ {
-    arg v, performAction = true;
+    arg v, notifyObservers = true;
     var min = this.min(), max = this.max();
     if (v != value) {
       value = if (min < max) {
@@ -50,8 +49,8 @@ SS2Param : Object {
         v.clip(max, min);
       };
       normalized = this.unmap(value);
-      if (performAction) {
-        this.act();
+      if (notifyObservers) {
+        this.notifyObservers();
       };
     }
     ^ this;
@@ -60,18 +59,18 @@ SS2Param : Object {
   /**
    * Sets the parameter via normalized.
    * @param n Float
-   * @param performAction Boolean
-   *   If true, will perform the action in this.action.
+   * @param notifyObservers Boolean
+   *   If true, will notify observers.
    * @param recalculate
    *   Forces recalculation. Use this when ControlSpec may have changed.
    */
   normalized_ {
-    arg n, performAction = true, recalculate = false;
+    arg n, notifyObservers = true, recalculate = false;
     if (n != normalized || recalculate) {
       normalized = n.clip(0, 1);
       value = this.map(n);
-      if (performAction) {
-        this.act();
+      if (notifyObservers) {
+        this.notifyObservers();
       };
     }
     ^ this;
@@ -219,19 +218,6 @@ SS2Param : Object {
     stream << this.display();
   }
 
-  act {
-    this.performAction();
-    this.runObservers(this);
-  }
-
-  /**
-   * Performs the function added in action.
-   */
-  performAction {
-    var a = action.defaultWhenNil({});
-    ^ a.value(this);
-  }
-
   observers {
     ^ observers.defaultWhenNil(List[]);
   }
@@ -257,7 +243,7 @@ SS2Param : Object {
     ^ this;
   }
 
-  runObservers {
+  notifyObservers {
     observers.do {
       arg observer;
       observer.observe(this);

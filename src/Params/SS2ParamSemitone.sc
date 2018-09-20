@@ -23,7 +23,7 @@ SS2ParamSemitone : SS2ParamContinuous {
     controlSpec = ControlSpec(minval: a_min.midiratio, maxval: a_max.midiratio, warp: \exp);
     round = a_round;
     this.normalized_(0, true, true);
-    this.act();
+    this.notifyObservers();
     ^ this;
   }
 

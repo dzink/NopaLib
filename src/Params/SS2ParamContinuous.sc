@@ -75,11 +75,11 @@ SS2ParamContinuous : SS2Param {
   /**
    * Sets the parameter via value.
    * @param v Float
-   * @param performAction Boolean
-   *   If true, will perform the action in this.action.
+   * @param notifyObservers Boolean
+   *   If true, will perform the action in this.notifyObserversion.
    */
   value_ {
-    arg v, performAction = true;
+    arg v, notifyObservers = true;
     var min = this.min(), max = this.max();
     if (v != value) {
       value = if (min < max) {
@@ -88,8 +88,8 @@ SS2ParamContinuous : SS2Param {
         v.clip(max, min);
       };
       normalized = this.unmap(value);
-      if (performAction) {
-        this.act();
+      if (notifyObservers) {
+        this.notifyObservers();
       };
     }
     ^ this;
@@ -98,18 +98,18 @@ SS2ParamContinuous : SS2Param {
   /**
    * Sets the parameter via normalized.
    * @param n Float
-   * @param performAction Boolean
-   *   If true, will perform the action in this.action.
+   * @param notifyObservers Boolean
+   *   If true, will notify observers.
    * @param recalculate
    *   Forces recalculation. Use this when ControlSpec may have changed.
    */
   normalized_ {
-    arg n, performAction = true, recalculate = false;
+    arg n, notifyObservers = true, recalculate = false;
     if (n != normalized || recalculate) {
       normalized = n.clip(0, 1);
       value = this.map(n);
-      if (performAction) {
-        this.act();
+      if (notifyObservers) {
+        this.notifyObservers();
       };
     }
     ^ this;

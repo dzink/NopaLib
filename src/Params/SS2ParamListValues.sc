@@ -64,11 +64,11 @@ SS2ParamListValues : SS2ParamList {
   }
 
   value_ {
-    arg v, performAction = true;
+    arg v, notifyObservers = true;
     value = v;
     normalized = this.unmap(value);
-    if (performAction) {
-      this.act();
+    if (notifyObservers) {
+      this.notifyObservers();
     };
     ^ this;
   }

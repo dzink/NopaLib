@@ -24,12 +24,12 @@ SS2ParamMirror : SS2ParamContinuous {
 
 
   value_ {
-    arg v, performAction = true;
+    arg v, notifyObservers = true;
     var max = this.max();
     value = v.clip(max.neg, max);
     normalized = this.unmap(v);
-    if (performAction) {
-      this.act();
+    if (notifyObservers) {
+      this.notifyObservers();
     };
     ^ this;
   }
