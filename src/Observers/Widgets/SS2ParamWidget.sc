@@ -37,13 +37,11 @@ SS2ParamWidget : CompositeView {
 		this.decorator = FlowLayout(this.bounds).gap_(0@0).margin_(0@0);
 		this.mouseEnterAction_({
 				AppClock.play({
-					\enter.postln;
 					this.magicTitle.showValue;
 				});
 			})
 			.mouseLeaveAction_({
 				AppClock.play({
-					\leave.postln;
 					this.magicTitle.showLabel;
 				});
 			});

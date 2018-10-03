@@ -112,7 +112,12 @@ SS2ParamMap : IdentityDictionary {
    */
   setAllSymbol {
     arg symbol = 0;
-    this.do { |p| if (p.respondsTo(\symbol_)) { p.symbol = symbol }; };
+    this.do {
+      arg p;
+      if (p.respondsTo(\symbol_)) {
+        p.symbol = symbol;
+      };
+    };
     cachedArgsArray = nil;
     ^ this;
   }
@@ -126,11 +131,20 @@ SS2ParamMap : IdentityDictionary {
 
   setAllIndex {
     arg index = 0;
-    this.do { |p| if (p.respondsTo(\index_)) { p.index = index }; };
-    cachedArgsArray = nil;
-    ^ this;
+    this.do {
+      arg p;
+      if (p.respondsTo(\index_)) {
+        p.index = index;
+      };
+      cachedArgsArray = nil;
+      ^ this;
+    }
   }
 
+  /**
+   * A helper function that will compare this paramMap with arguments to a
+   * given SynthDef.
+   */
   compareToSynthDefs {
     arg synthDefs;
     var sdControlNames = [], paramControlNames, param, sd;
@@ -155,18 +169,33 @@ SS2ParamMap : IdentityDictionary {
     ^[param, sd];
   }
 
+  /**
+   * Import from a preset.
+   */
   import {
     arg preset;
     preset.export(this);
     ^ this;
   }
 
+  /**
+   * Export to a preset.
+   */
   export {
     arg preset;
     preset.import(this);
     ^ this;
   }
 
+  /**
+   * Randomize a set of params in the map.
+   * @param Float blend
+   *   The amount to randomize. 0 will not randomize at all, while 1 will ignore
+   *   the previous value completely. 0.5 will split the difference between the
+   *   previous value and the new value.
+   * @param Array args
+   *   The list of args to randomize.
+   */
   randomize {
     arg blend = 1, args = nil;
     args = args.defaultWhenNil(this.keys);
