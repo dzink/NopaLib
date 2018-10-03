@@ -1,20 +1,17 @@
-SS2ParamWidget : SS2ParamObserver {
-	var <textField;
+SS2ParamWidget : CompositeView {
 	var <knob;
-	var <labelText;
-	var <valueText;
-	var <composite;
+	var <magicTitle;
 
 	*new {
-		arg container, param, register = false;
-		var p = super.new();
-		p.init(container, param);
+		arg parent, bounds = 48@48, param = nil, register = false;
+		var p = super.new(parent, bounds);
+		p.init(param);
 		^ p;
 	}
 
 	init {
-		arg container, param;
-		this.buildWidget(container, param);
+		arg param;
+		this.buildWidget(param);
 		^ this;
 	}
 
@@ -25,14 +22,10 @@ SS2ParamWidget : SS2ParamObserver {
 	}
 
 	buildWidget {
-		arg container, param = nil;
-		composite = CompositeView(container, 52@96);
+		arg param = nil;
 		this.buildComposite();
-
-		knob = Knob(composite, 48@32);
-		labelText = StaticText(composite, 48@8);
-		valueText = StaticText(composite, 48@14);
-		textField = TextField(composite, 48@10);
+		knob = Knob(this, 48@32);
+		magicTitle = SS2WidgetMagicTitle(this, param: param);
 		if (param.isNil.not) {
 			this.register(param);
 			this.observe(param);
@@ -41,7 +34,19 @@ SS2ParamWidget : SS2ParamObserver {
 	}
 
 	buildComposite {
-		composite.decorator = FlowLayout(composite.bounds);
+		this.decorator = FlowLayout(this.bounds).gap_(0@0).margin_(0@0);
+		this.mouseEnterAction_({
+				AppClock.play({
+					\enter.postln;
+					this.magicTitle.showValue;
+				});
+			})
+			.mouseLeaveAction_({
+				AppClock.play({
+					\leave.postln;
+					this.magicTitle.showLabel;
+				});
+			});
 		^ this;
 	}
 
@@ -49,9 +54,7 @@ SS2ParamWidget : SS2ParamObserver {
 		arg param;
 		if (param.isKindOf(SS2Param)) {
 			this.buildKnob(param);
-			this.buildLabelText(param);
-			this.buildValueText(param);
-			this.buildTextField(param);
+			this.buildMagicTitle(param);
 			this.observe(param);
 		} {
 			"Widget param should be a kind of SS2Param".warn;
@@ -69,67 +72,29 @@ SS2ParamWidget : SS2ParamObserver {
 			})
 			.keyDownAction_({
 				arg doc, char, mod, unicode, keycode, key;
-				this.textFieldAppearAction.();
+				magicTitle.showTextField;
+			})
+			.focusGainedAction_({
+				magicTitle.showValue;
+			})
+			.focusLostAction_({
+				magicTitle.showLabel;
 			});
 		^ this;
 	}
 
-	buildLabelText {
+	buildMagicTitle {
 		arg param;
-		labelText.string_(param.label)
-			.align_(\center)
-			.font_(Font("Helvetica",9));
+		magicTitle.register(param);
 		^ this;
-	}
-
-	buildValueText {
-		arg param;
-		valueText.string_(param.display)
-			.align_(\center)
-			.font_(Font("Helvetica",9))
-			.mouseDownAction_(this.textFieldAppearAction);
-		^ this;
-	}
-
-	buildTextField {
-		arg param;
-		textField.font_(Font("Helvetica",11))
-			.string_(param.display)
-			.focusLostAction_(this.textFieldSubmitAction(param))
-			.keyDownAction_({
-				arg doc, char, mod, unicode, keycode, key;
-				if (key == 16777220) {
-					this.textFieldSubmitAction(param).(textField);
-				};
-			})
-			.bounds_(valueText.bounds)
-			.visible_(false);
-		^ this;
-	}
-
-	textFieldAppearAction {
-		^ {
-			textField.visible_(true).focus(true);
-			valueText.visible_(false);
-		};
-	}
-
-	textFieldSubmitAction {
-		arg param;
-		^ {
-			arg a_textField;
-			param.display = a_textField.value;
-			this.observe(param);
-			textField.string_(param.display).visible_(false);
-			valueText.string_(param.display).visible_(true);
-		};
 	}
 
 	observe {
 		arg param;
-		knob.value = param.normalized;
-		valueText.string_(param.display);
-		textField.string_(param.display);
+		AppClock.play({
+			knob.value = param.normalized;
+			magicTitle.observe(param);
+		});
 		^ this;
 	}
 
