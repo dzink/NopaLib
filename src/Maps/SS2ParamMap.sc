@@ -167,4 +167,16 @@ SS2ParamMap : IdentityDictionary {
     ^ this;
   }
 
+  randomize {
+    arg blend = 1, args = nil;
+    args = args.defaultWhenNil(this.keys);
+    args.do {
+      arg key;
+      if (this.at(key).isKindOf(SS2ParamContinuous)) {
+        this.at(key).normalized = blend.linlin(0, 1, this.at(key).normalized, 1.0.rand);
+      };
+    };
+    ^ this;
+  }
+
 }
