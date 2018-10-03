@@ -61,4 +61,13 @@ SS2ParamMirror : SS2ParamContinuous {
   centered {
     ^ true;
   }
+
+  min {
+    ^ controlSpec.maxval.neg;
+  }
+
+  min_ {
+    arg m;
+    this.max = m.abs;
+  }
 }
