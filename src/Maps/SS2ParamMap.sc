@@ -208,4 +208,45 @@ SS2ParamMap : IdentityDictionary {
     ^ this;
   }
 
+  /**
+   * Blends with another ParamMap.
+   */
+  blend {
+    arg paramMap, blend = 0.5, args = nil;
+    var p = SS2ParamMap();
+    args = args.defaultWhenNil(this.keys);
+    this.blendFrom(this, paramMap, blend, args);
+    ^ this;
+  }
+
+  /**
+   * Sets params to be a blend of two other ParamMaps.
+   * @param ParamMap paramMap1
+   *   A ParamMap to blend. Param structure is copied from this ParamMap.
+   * @param ParamMap paramMap2
+   *   A ParamMap to blend.
+   * @param float blend
+   *   Blend amount. 0 is balanced towards paramMap1, 1 towards paramMap2. 0.5
+   *   is in the middle.
+   * @param Array args
+   *   An array of keys to blend.
+   * @return
+   *   this ParamMap, after it has had its params blended.
+   */
+  blendFrom {
+    arg paramMap1, paramMap2, blend = 0.5, args = nil;
+    args = args.defaultWhenNil(paramMap1.keys);
+    args.do {
+      arg key;
+      if (paramMap1[key].isNil.not && paramMap2[key].isNil.not) {
+
+        // In the case that paramMap1 is this, we don't need to copy.
+        it (this != paramMap1) {
+          this[key] = paramMap1[key].deepCopy;
+        };
+        this[key].normalized = blend.linlin(0, 1, paramMap1[key].normalized, paramMap2[key].normalized);
+      };
+    };
+    ^ this;
+  }
 }
