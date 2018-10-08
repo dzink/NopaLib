@@ -1,7 +1,7 @@
-SS2ParamSlider : SS2ParamWidget {
+SS2ParamSlider : SS2ParamKnob {
 
 	*new {
-		arg parent = nil, bounds = 48@24, param = nil, register = false;
+		arg parent = nil, bounds = 48@28, param = nil, register = false;
 		var p = super.new(parent, bounds);
 		p.init(param);
 		^ p;
@@ -16,7 +16,7 @@ SS2ParamSlider : SS2ParamWidget {
 	buildWidget {
 		arg param = nil;
 		this.buildComposite();
-		knob = Slider(this, 48@12);
+		knob = Slider(this, 48@16);
 		magicTitle = SS2WidgetMagicTitle(this, bounds: 48@12, param: param);
 		if (param.isNil.not) {
 			this.register(param);
