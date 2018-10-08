@@ -4,7 +4,7 @@ TestSS2ParamDisplaySemitone : TestSS2ParamDisplay {
 
   setUp {
     display = SS2ParamDisplaySemitone();
-    param = SS2Param(0.25, 4, \exp);
+    param = SS2ParamContinuous(0.25, 4, \exp);
     param.displayStrategy = display;
   }
 

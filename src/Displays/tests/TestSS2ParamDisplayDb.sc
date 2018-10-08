@@ -4,7 +4,7 @@ TestSS2ParamDisplayDb : TestSS2ParamDisplay {
 
   setUp {
     display = SS2ParamDisplayDb();
-    param = SS2Param(0, 2, \lin, 10);
+    param = SS2ParamContinuous(0, 2, \lin, 10);
     param.displayStrategy = display;
   }
 

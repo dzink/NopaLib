@@ -4,7 +4,7 @@ TestSS2ParamDisplayNormalized : TestSS2ParamDisplay {
 
   setUp {
     display = SS2ParamDisplayNormalized(scale: 20);
-    param = SS2Param(-2, 2, \lin);
+    param = SS2ParamContinuous(-2, 2, \lin);
     param.displayStrategy = display;
   }
 
