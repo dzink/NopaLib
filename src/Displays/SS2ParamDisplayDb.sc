@@ -6,6 +6,7 @@
 
 
 SS2ParamDisplayDb : SS2ParamDisplay {
+  var <convertFromAmps = false;
 
   *new {
 		arg digits = 2, scale = 1;
@@ -25,14 +26,21 @@ SS2ParamDisplayDb : SS2ParamDisplay {
   map {
 		arg n;
     var s;
-    n = this.getFromParam(n).abs.ampdb();
+    n = this.getFromParam(n);
+    if (convertFromAmps) {
+      n = n.abs.ampdb();
+    };
 		s = (n * scale).round(10 ** digits.neg).asString() ++ units;
     ^ s;
   }
 
 	unmap {
 		arg param, n;
-		param.value = this.parse(n).dbamp;
+		n = this.parse(n).dbamp;
+    if (convertFromAmps) {
+      n = n.dbamp.round(0.00001);
+    };
+    param.value = n;
     ^ this;
 	}
 
@@ -60,8 +68,14 @@ SS2ParamDisplayDb : SS2ParamDisplay {
 		^ "+";
 	}
 
+  convertFromAmps_ {
+    arg convert = true;
+    convertFromAmps = convert.asBoolean;
+    ^ this;
+  }
+
   /**
-   * Prefixes are steps and cents.
+   * No prefixes.
    */
   siPrefixes {
     ^ [

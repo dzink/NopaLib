@@ -132,6 +132,7 @@ SS2ParamDisplay : Object {
    * Parse a string, and return a float value. This checks for special posneg
    * strings, SI units, exponentials, and units. It is fairly good at tossing
    * out extraneous data.
+   * Also, scaling is applied here.
    */
   parse {
     arg s;

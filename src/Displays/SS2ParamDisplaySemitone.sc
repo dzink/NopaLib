@@ -5,7 +5,8 @@
  */
 
 SS2ParamDisplaySemitone : SS2ParamDisplayCenterable {
-
+  var <convertFromRatio = false;
+  var <convertFromHz = false;
   const maxSiIndex = 0;
   const minSiIndex = -2;
 
@@ -27,14 +28,27 @@ SS2ParamDisplaySemitone : SS2ParamDisplayCenterable {
   map {
 		arg n;
     var s;
-    n = this.getFromParam(n).ratiomidi().round(0.00001);
+    n = this.getFromParam(n);
+    if (convertFromRatio) {
+      n = n.ratiomidi().round(0.00001);
+    };
+    if (convertFromHz) {
+      n = n.cpsmidi().round(0.00001);
+    };
 		s = this.shorten(n * scale);
     ^ s;
   }
 
 	unmap {
 		arg param, n;
-		param.value = this.parse(n).midiratio().round(0.00001);
+		n = this.parse(n);
+    if (convertFromRatio) {
+      n = n.midiratio().round(0.00001);
+    };
+    if (convertFromHz) {
+      n = n.midicps().round(0.00001);
+    };
+    param.value = n;
 	}
 
 	getFromParam {
@@ -48,6 +62,19 @@ SS2ParamDisplaySemitone : SS2ParamDisplayCenterable {
 	posString {
 		^ "+";
 	}
+
+  convertFromRatio_ {
+    arg convert = true;
+    convertFromRatio = convert.asBoolean;
+    ^ this;
+  }
+
+  convertFromHz_ {
+    arg convert = true;
+    convertFromHz = convert.asBoolean;
+    ^ this;
+  }
+
 
   /**
    * Prefixes are steps and cents.
