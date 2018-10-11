@@ -35,15 +35,18 @@ SS2ParamList : SS2Param {
 
   index {
     arg n;
-    var i;
     n = n.defaultWhenNil(normalized);
-    i = n.linlin(0, normalScale, 0, this.lastIndex).floor.clip(0, this.lastIndex);
-    ^ i;
+    ^ n.linlin(0, 1, 0, this.size).floor.clip(0, this.lastIndex);
+  }
+
+  unIndex {
+    arg i;
+    ^ (i.floor + 0.5).clip(0, this.size).linlin(0, this.size, 0, 1);
   }
 
   index_ {
     arg i;
-    this.normalized = i.floor.clip(0, this.lastIndex).linlin(0, this.lastIndex, 0, normalScale);
+    this.value = i;
     ^ this;
   }
 
@@ -51,30 +54,18 @@ SS2ParamList : SS2Param {
   // even space and the last one doesn"t get left out.
   map {
     arg n;
-    n = n.defaultWhenNil(normalized);
-    n = (n * normalScale.reciprocal).trunc((this.size + 1).reciprocal);
-    ^ n;
+    ^ this.index(n);
   }
 
   unmap {
-    arg v;
-    var n;
-    v = v.defaultWhenNil(value);
-    n = (v * normalScale).trunc(this.size.reciprocal);
-    ^ n;
-  }
-
-  constrainLimitsToSymbols {
-    this.min = 0;
-    this.max = this.lastIndex;
-    this.warp = \lin;
-    this.recalculate();
-    ^ this;
+    arg i;
+    ^ this.unIndex(i);
   }
 
   symbols_ {
     arg a_symbols;
     symbols = a_symbols.asArray.collect(_.asSymbol);
+    normalScale = symbols.size.reciprocal;
     ^ this;
   }
 
@@ -100,4 +91,15 @@ SS2ParamList : SS2Param {
   max {
     ^ this.lastIndex;
   }
+
+  /**
+   * Makes sure there's at least a basic displayStrategy before attempting to
+   * display values.
+   */
+  ensureDefaultDisplay {
+    if (displayStrategy.isNil) {
+      this.displayStrategy_(SS2ParamDisplayList());
+    };
+  }
+
 }

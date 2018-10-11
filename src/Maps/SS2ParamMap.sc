@@ -55,7 +55,7 @@ SS2ParamMap : IdentityDictionary {
 
   asPreset {
     arg args = nil;
-    ^ SS2ParamMapPreset(this, args);
+    ^ SS2ParamMapPreset.newFrom(this, args: args);
   }
 
   setNormalized {

@@ -1,6 +1,5 @@
 SS2ParamListValues : SS2ParamList {
   var <values;
-  var normalScale;
 
   *new {
     arg symbols = [], values = [];

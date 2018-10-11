@@ -6,15 +6,16 @@
 
 
 SS2ParamDisplayCenterable : SS2ParamDisplay {
-  var> centered;
+  var <centered;
 
-  centered {
-    ^ centered;
+  centered_ {
+    arg center = true;
+    centered = center.asBoolean();
+    ^ this;
   }
 
   center {
-    arg center = true;
-    centered = center;
+    centered = true;
     ^ this;
   }
 

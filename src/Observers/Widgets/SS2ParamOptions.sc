@@ -62,8 +62,7 @@ SS2ParamOptions : SS2ParamWidget {
 		arg param;
 		AppClock.play({
 			select.value = param.index;
-			});
-		[\observe, param.index, select.value].postln;
+		});
 		^ this;
 	}
 }
