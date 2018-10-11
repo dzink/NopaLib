@@ -27,22 +27,8 @@ SS2ParamSlider : SS2ParamKnob {
 
 	buildKnob {
 		arg param;
-		knob.thumbSize_(8)
-			.action_({
-				arg a_knob;
-				param.normalized = a_knob.value;
-				magicTitle.observe(param);
-			})
-			.keyDownAction_({
-				arg doc, char, mod, unicode, keycode, key;
-				this.textFieldAppearAction.();
-			})
-			.focusGainedAction_({
-				magicTitle.showValue;
-			})
-			.focusLostAction_({
-				magicTitle.showLabel;
-			});
+		super.buildKnob(param);
+		knob.thumbSize_(8);
 		^ this;
 	}
 }

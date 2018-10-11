@@ -56,8 +56,7 @@ SS2ParamKnob : CompositeView {
 
 	buildKnob {
 		arg param;
-		knob.centered_(param.displayStrategy.centered)
-			.action_({
+		knob.action_({
 				arg a_knob;
 				param.normalized = a_knob.value;
 				this.register(param);
@@ -70,8 +69,13 @@ SS2ParamKnob : CompositeView {
 				magicTitle.showValue;
 			})
 			.focusLostAction_({
-				magicTitle.showLabel;
+				if (magicTitle.layout.index == 1) {
+					magicTitle.showLabel;
+				};
 			});
+		if (knob.isKindOf(Knob)) {
+			knob.centered_(param.displayStrategy.centered);
+		};
 		^ this;
 	}
 
@@ -83,10 +87,10 @@ SS2ParamKnob : CompositeView {
 
 	observe {
 		arg param;
-		AppClock.play({
+		// AppClock.play({
 			knob.value = param.normalized;
 			magicTitle.observe(param);
-		});
+		// });
 		^ this;
 	}
 
