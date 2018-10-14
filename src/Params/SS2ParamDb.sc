@@ -1,34 +1,42 @@
-SS2ParamDb : SS2ParamContinuous {
+SS2ParamDb : SS2ParamInf {
+  var <>silentDb = -80;
 
-  /**
-   * @param min Float
-   *   The number value will represent at normalized = 0.
-   * @param max Float
-   *   The number value will represent at normalized = 1.
-   * @param warp Mixed
-   *   \lin is a linear warp, \exp is an exponential warp, Floats will create
-   *   a curve.
-   * @param round Float
-   *   The amount to round value to.
-   */
-  *new {
-    arg min = -inf, max = 0, warp = nil, round = 0;
-    var p = super.new();
-    p.init(a_min: min, a_max: max, a_warp: warp, a_round: round);
-    ^ p;
-  }
+  // /**
+  //  * @param min Float
+  //  *   The number value will represent at normalized = 0.
+  //  * @param max Float
+  //  *   The number value will represent at normalized = 1.
+  //  * @param warp Mixed
+  //  *   \lin is a linear warp, \exp is an exponential warp, Floats will create
+  //  *   a curve.
+  //  * @param round Float
+  //  *   The amount to round value to.
+  //  */
+  // *new {
+  //   arg min = -inf, max = 0, warp = nil, round = 0;
+  //   var p = super.new();
+  //   p.init(a_min: min, a_max: max, a_warp: warp, a_round: round);
+  //   ^ p;
+  // }
+  //
 
   init {
     arg a_min = -inf, a_max = 0, a_warp = nil, a_round = 0;
     var warp;
     warp = if (a_warp.isNil) {
-      if (min(a_min, a_max) > -inf) { \exp } { 4 };
+      if (min(a_min, a_max) > 0) { \exp } { 4 };
     } {
       a_warp;
     };
-    controlSpec = ControlSpec(minval: a_min.dbamp, maxval: a_max.dbamp, warp: warp);
+    controlSpec = ControlSpec(minval: a_min, maxval: a_max, warp: warp);
     round = a_round;
-    this.normalized_(0, true, true);
+    if (a_min == -inf) {
+      normalized = 0;
+      this.min = silentDb;
+      this.minInf = true;
+    } {
+      this.normalized_(0, true, true);
+    };
     ^ this;
   }
 
@@ -70,11 +78,11 @@ SS2ParamDb : SS2ParamContinuous {
     );
   }
 
-  convertFromAmps {
+  convertToAmps {
     ^ conversionStrategy == \amps;
   }
 
-  convertFromAmps_ {
+  convertToAmps_ {
     arg convert = true;
     conversionStrategy = if (convert, {\amps}, {\none});
     ^ this;

@@ -1,6 +1,6 @@
 SS2ParamInf : SS2ParamContinuous {
-  var <minInf;
-  var <maxInf;
+  var <minInf = false;
+  var <maxInf = false;
 
   /**
    * @param min Float
@@ -17,8 +17,6 @@ SS2ParamInf : SS2ParamContinuous {
     arg min = 0, max = 1, warp = 0, round = 0.0001;
     var p = super.new();
     p.init(a_min: min, a_max: max, a_warp: warp, a_round: round);
-    p.minInf = false;
-    p.maxInf = false;
     ^ p;
   }
 
@@ -43,6 +41,17 @@ SS2ParamInf : SS2ParamContinuous {
       this.actOnNewValue(notifyObservers);
     };
     ^ this;
+  }
+
+  value {
+    if (normalized == 0 && minInf) {
+      ^ -inf;
+    };
+
+    if (normalized == 1 && maxInf) {
+      ^ inf;
+    };
+    ^ value;
   }
 
   /**
@@ -81,7 +90,12 @@ SS2ParamInf : SS2ParamContinuous {
     arg n, notifyObservers = true, recalculate = false;
     if (n != normalized || recalculate) {
       normalized = n.clip(0, 1);
-      value = if (n == 1.0, { inf }, this.map(n));
+      value = switch(n,
+        0, { -inf },
+        1, {inf},
+        { this.map(n) }
+      );
+      // value = if (n == 1.0, { inf }, this.map(n));
       this.actOnNewValue(notifyObservers);
     }
     ^ this;

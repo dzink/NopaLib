@@ -222,7 +222,7 @@ SS2Param : Object {
   }
 
   actOnNewValue {
-    notifyObservers = true;
+    arg notifyObservers = true;
     prCachedTransform = nil;
     if (notifyObservers) {
       this.notifyObservers();

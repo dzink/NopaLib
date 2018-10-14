@@ -88,9 +88,7 @@ SS2ParamContinuous : SS2Param {
         v.clip(max, min);
       };
       normalized = this.unmap(value);
-      if (notifyObservers) {
-        this.notifyObservers();
-      };
+      this.actOnNewValue(notifyObservers);
     }
     ^ this;
   }
@@ -108,9 +106,6 @@ SS2ParamContinuous : SS2Param {
     if (n != normalized || recalculate) {
       normalized = n.clip(0, 1);
       value = this.map(n);
-      if (notifyObservers) {
-        this.notifyObservers();
-      };
     }
     ^ this;
   }

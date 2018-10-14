@@ -13,8 +13,8 @@ SS2ParamDisplay : Object {
   const <negString = "-";
   const <zeroString = "";
 
-  const maxSiIndex = 9;
-  const minSiIndex = -9;
+  const maxSiIndex = 3;
+  const minSiIndex = -2;
 
   *new {
 		arg units = "", digits = 3, scale = 1;
@@ -119,7 +119,6 @@ SS2ParamDisplay : Object {
 
       // Round to significantDigits;
       base = base.round(10 ** (significantDigits - base.log10.floor - 1).neg);
-
       s = this.posneg(n) ++ base.asString() ++ si[1];
       ^ s;
     } {

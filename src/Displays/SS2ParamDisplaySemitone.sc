@@ -5,8 +5,8 @@
  */
 
 SS2ParamDisplaySemitone : SS2ParamDisplayCenterable {
-  var <convertFromRatio = false;
-  var <convertFromHz = false;
+  var <convertToRatio = false;
+  var <convertToHz = false;
   const maxSiIndex = 0;
   const minSiIndex = -2;
 

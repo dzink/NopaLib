@@ -32,7 +32,7 @@ SS2ParamDisplayDb : SS2ParamDisplay {
 	// unmap {
 	// 	arg param, n;
 	// 	n = this.parse(n).dbamp;
-  //   if (convertFromAmps) {
+  //   if (convertToAmps) {
   //     n = n.dbamp.round(0.00001);
   //   };
   //   param.value = n;
