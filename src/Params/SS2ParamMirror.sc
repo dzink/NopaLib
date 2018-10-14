@@ -12,6 +12,7 @@ SS2ParamMirror : SS2ParamContinuous {
     arg a_max = 1, a_warp = \lin, a_round = 0, a_min = 0;
     controlSpec = ControlSpec(minval: 0, maxval: a_max, warp: a_warp);
 
+    // Mirrors by default have a 0 endpoint, which can not be \exp'd
     if (controlSpec.warp.isKindOf(ExponentialWarp)) {
       ("SS2Params with Exponential curves will fail upon being calculated.");
     };
@@ -28,9 +29,7 @@ SS2ParamMirror : SS2ParamContinuous {
     var max = this.max();
     value = v.clip(max.neg, max);
     normalized = this.unmap(v);
-    if (notifyObservers) {
-      this.notifyObservers();
-    };
+    this.actOnNewValue(notifyObservers);
     ^ this;
   }
 

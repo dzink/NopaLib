@@ -6,8 +6,6 @@
 
 
 SS2ParamDisplayDb : SS2ParamDisplay {
-  var <convertFromAmps = false;
-
   *new {
 		arg digits = 2, scale = 1;
 		var p = super.new();
@@ -23,34 +21,31 @@ SS2ParamDisplayDb : SS2ParamDisplay {
     ^ this;
 	}
 
-  map {
-		arg n;
-    var s;
-    n = this.getFromParam(n);
-    if (convertFromAmps) {
-      n = n.abs.ampdb();
-    };
-		s = (n * scale).round(10 ** digits.neg).asString() ++ units;
-    ^ s;
-  }
-
-	unmap {
-		arg param, n;
-		n = this.parse(n).dbamp;
-    if (convertFromAmps) {
-      n = n.dbamp.round(0.00001);
-    };
-    param.value = n;
-    ^ this;
-	}
-
-	getFromParam {
-    arg n;
-    if (n.isKindOf(SS2Param)) {
-      n = n.value;
-    };
-    ^ n;
-  }
+  // map {
+	// 	arg n;
+  //   var s;
+  //   n = this.getFromParam(n);
+	// 	s = (n * scale).round(10 ** digits.neg).asString() ++ units;
+  //   ^ s;
+  // }
+  //
+	// unmap {
+	// 	arg param, n;
+	// 	n = this.parse(n).dbamp;
+  //   if (convertFromAmps) {
+  //     n = n.dbamp.round(0.00001);
+  //   };
+  //   param.value = n;
+  //   ^ this;
+	// }
+  //
+	// getFromParam {
+  //   arg n;
+  //   if (n.isKindOf(SS2Param)) {
+  //     n = n.value;
+  //   };
+  //   ^ n;
+  // }
 
   centered {
     ^ false;
@@ -67,12 +62,6 @@ SS2ParamDisplayDb : SS2ParamDisplay {
 	zeroString {
 		^ "+";
 	}
-
-  convertFromAmps_ {
-    arg convert = true;
-    convertFromAmps = convert.asBoolean;
-    ^ this;
-  }
 
   /**
    * No prefixes.

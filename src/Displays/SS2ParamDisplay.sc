@@ -100,6 +100,7 @@ SS2ParamDisplay : Object {
     var base, s, log10, si;
     n = this.getFromParam(n);
     significantDigits = significantDigits.defaultWhenNil(digits).asFloat();
+    si = [1, ""];
 
     if (n.abs == inf) {
       ^ this.posneg(n) ++ "∞";

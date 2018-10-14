@@ -20,61 +20,14 @@ SS2ParamDisplaySemitone : SS2ParamDisplayCenterable {
 	init {
 		arg a_digits = 3, a_scale = 1;
     this.digits = a_digits;
-		this.units = "st";
+		this.units = "";
 		this.scale = a_scale;
     ^ this;
 	}
 
-  map {
-		arg n;
-    var s;
-    n = this.getFromParam(n);
-    if (convertFromRatio) {
-      n = n.ratiomidi().round(0.00001);
-    };
-    if (convertFromHz) {
-      n = n.cpsmidi().round(0.00001);
-    };
-		s = this.shorten(n * scale);
-    ^ s;
-  }
-
-	unmap {
-		arg param, n;
-		n = this.parse(n);
-    if (convertFromRatio) {
-      n = n.midiratio().round(0.00001);
-    };
-    if (convertFromHz) {
-      n = n.midicps().round(0.00001);
-    };
-    param.value = n;
-	}
-
-	getFromParam {
-    arg n;
-    if (n.isKindOf(SS2Param)) {
-      n = n.value;
-    };
-    ^ n;
-  }
-
 	posString {
 		^ "+";
 	}
-
-  convertFromRatio_ {
-    arg convert = true;
-    convertFromRatio = convert.asBoolean;
-    ^ this;
-  }
-
-  convertFromHz_ {
-    arg convert = true;
-    convertFromHz = convert.asBoolean;
-    ^ this;
-  }
-
 
   /**
    * Prefixes are steps and cents.

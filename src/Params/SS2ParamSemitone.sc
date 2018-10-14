@@ -33,11 +33,73 @@ SS2ParamSemitone : SS2ParamContinuous {
     };
   }
 
-  map {
+  semitones {
     arg n;
-    n = n.defaultWhenNil(normalized);
-    n = controlSpec.map(n);
-    ^ n.ratiomidi.round(round).midiratio;
+    n = n.defaultWhenNil(value);
+    ^ n;
+  }
+
+  semitones_ {
+    arg st;
+    this.value = st;
+    ^ this;
+  }
+
+  ratio {
+    arg n;
+    n = n.defaultWhenNil(value).midiratio;
+    ^ n;
+  }
+
+  ratio_ {
+    arg ratio;
+    this.value = ratio.ratiomidi;
+  }
+
+  hz {
+    arg n;
+    n = n.defaultWhenNil(value).midicps;
+    ^ n;
+  }
+
+  hz_ {
+    arg ratio;
+    this.value = ratio.cpsmidi;
+  }
+
+
+  transformOut {
+    arg n = nil;
+    n = n.defaultWhenNil(value);
+    ^ switch(conversionStrategy,
+      \hz, { this.hz(n) },
+      \ratio, { this.ratio(n) },
+      n
+    );
+  }
+
+  convertFromHz {
+    ^ conversionStrategy == \hz;
+  }
+
+  convertFromHz_ {
+    arg convert = true;
+    conversionStrategy = if (convert, {\hz}, {\none});
+    ^ this;
+  }
+
+  convertFromRatio {
+    ^ conversionStrategy == \ratio;
+  }
+
+  convertFromRatio_ {
+    arg convert = true;
+    conversionStrategy = if (convert, {\hz}, {\none});
+    ^ this;
+  }
+
+  validConversionStrategies {
+    ^ [\none, \hz, \ratio];
   }
 
 }

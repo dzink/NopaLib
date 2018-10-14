@@ -66,9 +66,7 @@ SS2ParamListValues : SS2ParamList {
     arg v, notifyObservers = true;
     value = v;
     normalized = this.unmap(value);
-    if (notifyObservers) {
-      this.notifyObservers();
-    };
+    this.actOnNewValue(notifyObservers);
     ^ this;
   }
 

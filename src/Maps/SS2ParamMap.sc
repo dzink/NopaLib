@@ -35,7 +35,7 @@ SS2ParamMap : IdentityDictionary {
     args.do {
       arg key;
       array = array.add(key);
-      array = array.add(this[key].value);
+      array = array.add(this[key].transformOut());
     };
     ^ array;
   }

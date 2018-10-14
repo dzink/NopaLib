@@ -3,11 +3,13 @@
  */
 
 SS2Param : Object {
-  var <normalized, <value;
+  var <normalized, value;
   var >displayStrategy;
+  var <conversionStrategy = \none;
   var <>label;
   var observers;
   var events;
+  var prCachedTransform = nil;
 
   const <midiMax = 127.0;
   const <midiMin = 0.0;
@@ -33,6 +35,11 @@ SS2Param : Object {
     ^ 1;
   }
 
+  value {
+    arg transform = false;
+    ^ if (transform) { this.transformOut(value); } { value; };
+  }
+
   /**
    * Sets the parameter via value.
    * @param v Float
@@ -49,9 +56,7 @@ SS2Param : Object {
         v.clip(max, min);
       };
       normalized = this.unmap(value);
-      if (notifyObservers) {
-        this.notifyObservers();
-      };
+      this.actOnNewValue(notifyObservers);
     }
     ^ this;
   }
@@ -69,9 +74,7 @@ SS2Param : Object {
     if (n != normalized || recalculate) {
       normalized = n.clip(0, 1);
       value = this.map(n);
-      if (notifyObservers) {
-        this.notifyObservers();
-      };
+      this.actOnNewValue(notifyObservers);
     }
     ^ this;
   }
@@ -218,6 +221,15 @@ SS2Param : Object {
     stream << this.display();
   }
 
+  actOnNewValue {
+    notifyObservers = true;
+    prCachedTransform = nil;
+    if (notifyObservers) {
+      this.notifyObservers();
+    };
+    ^ this;
+  }
+
   observers {
     ^ observers.defaultWhenNil(List[]);
   }
@@ -301,4 +313,33 @@ SS2Param : Object {
     ^ value;
   }
 
+  /**
+   * Stub for subclasses that will want to transform values when they are output
+   * to Nodes.
+   */
+  transformOut {
+    arg n = nil;
+    if (prCachedTransform.isNil) {
+      n = n.defaultWhenNil(value);
+      prCachedTransform = n;
+    }
+    ^ prCachedTransform;
+  }
+
+  conversionStrategy_ {
+    arg convert;
+    if (convert.isNil) {
+      conversionStrategy = \none;
+      ^ this;
+    };
+    if (this.validConversionStrategies.indexOf(convert).isNil) {
+      convert.asString() ++ " is not a valid conversion strategy.";
+    };
+    conversionStrategy = convert;
+    ^ this;
+  }
+
+  validConversionStrategies {
+    ^ [\none];
+  }
 }

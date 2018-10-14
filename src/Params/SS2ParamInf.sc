@@ -40,9 +40,7 @@ SS2ParamInf : SS2ParamContinuous {
     arg v, notifyObservers = true;
     if (v != value) {
       #normalized, value = this.prGetNomalizedAndValueFromBounds(v);
-      if (notifyObservers) {
-        this.notifyObservers();
-      };
+      this.actOnNewValue(notifyObservers);
     };
     ^ this;
   }
@@ -84,9 +82,7 @@ SS2ParamInf : SS2ParamContinuous {
     if (n != normalized || recalculate) {
       normalized = n.clip(0, 1);
       value = if (n == 1.0, { inf }, this.map(n));
-      if (notifyObservers) {
-        this.notifyObservers();
-      };
+      this.actOnNewValue(notifyObservers);
     }
     ^ this;
   }

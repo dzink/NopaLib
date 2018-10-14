@@ -38,22 +38,46 @@ SS2ParamDb : SS2ParamContinuous {
     };
   }
 
-  map {
-    arg n;
-    n = n.defaultWhenNil(normalized);
-    n = controlSpec.map(n);
-    ^ n.ampdb.round(round).dbamp;
-  }
-
   db {
     arg n;
-    n = n.normalized(value);
-    ^ n.ampdb;
+    n = n.defaultWhenNil(value);
+    ^ n;
   }
 
   db_ {
     arg db;
-    this.value = db.dbamp;
+    this.value = db;
+    ^ this;
+  }
+
+  amps {
+    arg n;
+    n = n.defaultWhenNil(value).dbamp;
+    ^ n;
+  }
+
+  amps_ {
+    arg amp;
+    this.value = amp.ampdb;
+  }
+
+  transformOut {
+    arg n = nil;
+    n = n.defaultWhenNil(value);
+    ^ switch(conversionStrategy,
+      \amps, { this.amps(n) },
+      n
+    );
+  }
+
+  convertFromAmps {
+    ^ conversionStrategy == \amps;
+  }
+
+  convertFromAmps_ {
+    arg convert = true;
+    conversionStrategy = if (convert, {\amps}, {\none});
+    ^ this;
   }
 
 }
