@@ -5,7 +5,7 @@
  */
 
 
-SS2ParamDisplayDb : SS2ParamDisplay {
+SS2ParamDisplayDb : SS2ParamDisplayCenterable {
   *new {
 		arg digits = 2, scale = 1;
 		var p = super.new();
@@ -68,7 +68,9 @@ SS2ParamDisplayDb : SS2ParamDisplay {
    */
   siPrefixes {
     ^ [
+      [3, "K"],
       [0, ""],
+      [-3, "m"],
     ];
   }
 }

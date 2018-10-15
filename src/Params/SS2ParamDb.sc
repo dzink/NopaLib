@@ -42,8 +42,9 @@ SS2ParamDb : SS2ParamInf {
 
   ensureDefaultDisplay {
     if (displayStrategy.isNil) {
-      this.displayStrategy_(SS2ParamDisplayDb());
+      displayStrategy = SS2ParamDisplayDb();
     };
+    ^ this;
   }
 
   db {

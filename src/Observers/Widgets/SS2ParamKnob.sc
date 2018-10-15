@@ -87,10 +87,8 @@ SS2ParamKnob : CompositeView {
 
 	observe {
 		arg param;
-		// AppClock.play({
-			knob.value = param.normalized;
-			magicTitle.observe(param);
-		// });
+		knob.value = param.normalized;
+		magicTitle.observe(param);
 		^ this;
 	}
 

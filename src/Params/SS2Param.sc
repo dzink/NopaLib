@@ -209,8 +209,9 @@ SS2Param : Object {
    */
   ensureDefaultDisplay {
     if (displayStrategy.isNil) {
-      this.displayStrategy_(SS2ParamDisplay());
+      displayStrategy = SS2ParamDisplay();
     };
+    ^ this;
   }
 
   /**
