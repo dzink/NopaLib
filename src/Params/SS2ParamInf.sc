@@ -47,7 +47,6 @@ SS2ParamInf : SS2ParamContinuous {
     if (normalized == 0 && minInf) {
       ^ -inf;
     };
-
     if (normalized == 1 && maxInf) {
       ^ inf;
     };
@@ -95,7 +94,6 @@ SS2ParamInf : SS2ParamContinuous {
         1, {inf},
         { this.map(n) }
       );
-      // value = if (n == 1.0, { inf }, this.map(n));
       this.actOnNewValue(notifyObservers);
     }
     ^ this;

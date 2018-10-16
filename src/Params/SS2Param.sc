@@ -57,7 +57,7 @@ SS2Param : Object {
       };
       normalized = this.unmap(value);
       this.actOnNewValue(notifyObservers);
-    }
+    };
     ^ this;
   }
 
@@ -321,9 +321,9 @@ SS2Param : Object {
   transformOut {
     arg n = nil;
     if (prCachedTransform.isNil) {
-      n = n.defaultWhenNil(value);
+      n = n.defaultWhenNil(this.value);
       prCachedTransform = n;
-    }
+    };
     ^ prCachedTransform;
   }
 

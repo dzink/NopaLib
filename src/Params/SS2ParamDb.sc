@@ -72,11 +72,15 @@ SS2ParamDb : SS2ParamInf {
 
   transformOut {
     arg n = nil;
-    n = n.defaultWhenNil(value);
-    ^ switch(conversionStrategy,
-      \amps, { this.amps(n) },
-      n
-    );
+    if (prCachedTransform.isNil) {
+      n = n.defaultWhenNil(this.value);
+      n = switch(conversionStrategy,
+        \amps, { this.amps(n) },
+        n
+      );
+      prCachedTransform = n;
+    };
+    ^ prCachedTransform;
   }
 
   convertToAmps {

@@ -89,7 +89,7 @@ SS2ParamContinuous : SS2Param {
       };
       normalized = this.unmap(value);
       this.actOnNewValue(notifyObservers);
-    }
+    };
     ^ this;
   }
 
@@ -106,6 +106,7 @@ SS2ParamContinuous : SS2Param {
     if (n != normalized || recalculate) {
       normalized = n.clip(0, 1);
       value = this.map(n);
+      this.actOnNewValue(notifyObservers);
     }
     ^ this;
   }

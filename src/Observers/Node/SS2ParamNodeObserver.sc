@@ -17,7 +17,8 @@ SS2ParamNodeObserver : SS2ParamObserver {
 
 	observe {
 		arg param;
-		node.set(symbol, param.value);
+		node.set(symbol, param.transformOut());
+		[param.label, param.value, param.transformOut()].postln;
 		^ this;
 	}
 
