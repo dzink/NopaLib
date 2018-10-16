@@ -1,16 +1,16 @@
 SS2ParamDisplayPercent : SS2ParamDisplayCenterable {
   *new {
-    arg digits = 3, centered = false;
+    arg digits = 3, centered = false, scale = 100;
     var p = super.new();
     p.init(digits, centered);
     ^ p;
   }
 
   init {
-    arg a_digits = 3, a_centered = false;
+    arg a_digits = 3, a_centered = false, a_scale = 100;
     this.digits = a_digits;
 		this.units = "%";
-		this.scale = 100;
+		this.scale = a_scale;
     centered = a_centered;
     ^ this;
   }
