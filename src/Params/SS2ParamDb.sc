@@ -1,24 +1,12 @@
 SS2ParamDb : SS2ParamInf {
   var <>silentDb = -80;
 
-  // /**
-  //  * @param min Float
-  //  *   The number value will represent at normalized = 0.
-  //  * @param max Float
-  //  *   The number value will represent at normalized = 1.
-  //  * @param warp Mixed
-  //  *   \lin is a linear warp, \exp is an exponential warp, Floats will create
-  //  *   a curve.
-  //  * @param round Float
-  //  *   The amount to round value to.
-  //  */
   // *new {
-  //   arg min = -inf, max = 0, warp = nil, round = 0;
+  //   arg min = 0, max = 1, warp = 0, round = 0.0001;
   //   var p = super.new();
   //   p.init(a_min: min, a_max: max, a_warp: warp, a_round: round);
   //   ^ p;
   // }
-  //
 
   init {
     arg a_min = -inf, a_max = 0, a_warp = nil, a_round = 0;
@@ -36,6 +24,7 @@ SS2ParamDb : SS2ParamInf {
       this.minInf = true;
     } {
       this.normalized_(0, true, true);
+      this.minInf = false;
     };
     ^ this;
   }
