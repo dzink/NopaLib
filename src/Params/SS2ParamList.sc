@@ -102,4 +102,14 @@ SS2ParamList : SS2Param {
     };
   }
 
+  import {
+    arg n;
+    this.symbol = n;
+    ^ this;
+  }
+
+  export {
+    ^ this.symbol;
+  }
+
 }
