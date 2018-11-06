@@ -1,4 +1,4 @@
-SS2ParamKnob : CompositeView {
+SS2ParamKnob : SS2ParamWidget {
 	var < knob;
 	var < magicTitle;
 
@@ -59,7 +59,7 @@ SS2ParamKnob : CompositeView {
 		knob.action_({
 				arg a_knob;
 				param.normalized = a_knob.value;
-				this.register(param);
+				this.observe(param);
 			})
 			.keyDownAction_({
 				arg doc, char, mod, unicode, keycode, key;
@@ -90,6 +90,16 @@ SS2ParamKnob : CompositeView {
 		knob.value = param.normalized;
 		magicTitle.observe(param);
 		^ this;
+	}
+
+	label_ {
+		arg label;
+		magicTitle.labelText.string_(label);
+		^ this;
+	}
+
+	label {
+		^ magicTitle.labelText.string();
 	}
 
 }

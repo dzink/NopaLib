@@ -16,7 +16,6 @@ SS2ParamDb : SS2ParamInf {
     } {
       a_warp;
     };
-    [\dbwarp, warp, a_warp].postln;
     round = a_round;
     if (a_min == -inf) {
       controlSpec = ControlSpec(minval: silentDb, maxval: a_max, warp: warp);

@@ -70,7 +70,7 @@ SS2ParamSemitone : SS2ParamContinuous {
 
   convertToRatio_ {
     arg convert = true;
-    conversionStrategy = if (convert, {\hz}, {\none});
+    conversionStrategy = if (convert, {\ratio}, {\none});
     ^ this;
   }
 

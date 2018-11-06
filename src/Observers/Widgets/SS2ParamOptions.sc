@@ -65,4 +65,14 @@ SS2ParamOptions : SS2ParamWidget {
 		});
 		^ this;
 	}
+
+	label_ {
+		arg label;
+		labelText.string_(label);
+		^ this;
+	}
+
+	label {
+		^ labelText.string();
+	}
 }
