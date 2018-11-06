@@ -36,7 +36,7 @@ SS2ParamMirror : SS2ParamContinuous {
   map {
     arg n;
     var scale;
-    n = n.defaultWhenNil(normalized);
+    n = n ? normalized;
     scale = (n - 0.5).abs;
     scale = scale.linlin(centerBuffer, 0.5, 0, 1).clip(0, 1);
     scale = controlSpec.map(scale);
@@ -47,7 +47,7 @@ SS2ParamMirror : SS2ParamContinuous {
   unmap {
     arg v;
     var scale;
-    v = v.defaultWhenNil(value);
+    v = v ? value;
     if (v == 0) {
       ^ 0.5;
     };

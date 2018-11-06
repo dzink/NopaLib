@@ -35,7 +35,7 @@ SS2ParamList : SS2Param {
 
   index {
     arg n;
-    n = n.defaultWhenNil(normalized);
+    n = n ? normalized;
     ^ n.linlin(0, 1, 0, this.size).floor.clip(0, this.lastIndex);
   }
 
@@ -76,11 +76,11 @@ SS2ParamList : SS2Param {
   }
 
   size {
-    ^ symbols.defaultWhenNil([]).size.asFloat();
+    ^ (symbols ? []).size.asFloat();
   }
 
   lastIndex {
-    ^ symbols.defaultWhenNil([]).size.asFloat() - 1;
+    ^ (symbols ? []).size.asFloat() - 1;
   }
 
 

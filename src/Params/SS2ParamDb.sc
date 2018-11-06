@@ -38,7 +38,7 @@ SS2ParamDb : SS2ParamInf {
 
   db {
     arg n;
-    n = n.defaultWhenNil(value);
+    n = n ? value;
     ^ n;
   }
 
@@ -50,7 +50,7 @@ SS2ParamDb : SS2ParamInf {
 
   amps {
     arg n;
-    n = n.defaultWhenNil(value).dbamp;
+    n = (n ? value).dbamp;
     ^ n;
   }
 
@@ -62,7 +62,7 @@ SS2ParamDb : SS2ParamInf {
   transformOut {
     arg n = nil;
     if (prCachedTransform.isNil) {
-      n = n.defaultWhenNil(this.value);
+      n = n ? this.value;
       n = switch(conversionStrategy,
         \amps, { this.amps(n) },
         n

@@ -36,17 +36,17 @@ SS2ParamDisplay : Object {
    */
   digits_ {
     arg a_digits;
-    digits = a_digits.defaultWhenNil(0).asFloat();
+    digits = (a_digits ? 0).asFloat();
   }
 
   units_ {
     arg a_units;
-    units = a_units.defaultWhenNil("").asString();
+    units = (a_units ? "").asString();
   }
 
   scale_ {
     arg a_scale;
-    scale = a_scale.defaultWhenNil(1).asFloat();
+    scale = (a_scale ? 1).asFloat();
   }
 
   map {
@@ -99,7 +99,7 @@ SS2ParamDisplay : Object {
     arg n = 0, significantDigits = nil;
     var base, s, log10, si;
     n = this.getFromParam(n);
-    significantDigits = significantDigits.defaultWhenNil(digits).asFloat();
+    significantDigits = (s ? digits).asFloat();
     si = [1, ""];
 
     if (n.abs == inf) {

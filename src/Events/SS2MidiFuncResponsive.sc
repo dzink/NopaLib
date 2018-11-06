@@ -51,7 +51,7 @@ SS2MidiFuncResponsive : SS2MidiFunc{
 	midiFlex {
 		arg val, now;
 		var timeDiff, valueDiff;
-		now = now.defaultWhenNil(SystemClock.seconds);
+		now = now ? SystemClock.seconds;
 		timeDiff = (now - lastMessageTime).clip(minTime, maxTime) / maxTime;
 		valueDiff = (val - lastMessageValue).clip(maxValue.neg, maxValue) / maxValue;
 		lastMessageTime = now;

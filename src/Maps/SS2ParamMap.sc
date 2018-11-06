@@ -31,7 +31,7 @@ SS2ParamMap : IdentityDictionary {
   asArray {
     arg args = nil;
     var array = Array();
-    args = args.defaultWhenNil(this.keys);
+    args = args ? this.keys;
     args.do {
       arg key;
       array = array.add(key);
@@ -198,7 +198,7 @@ SS2ParamMap : IdentityDictionary {
    */
   randomize {
     arg blend = 1, args = nil;
-    args = args.defaultWhenNil(this.keys);
+    args = args ? this.keys;
     args.do {
       arg key;
       if (this.at(key).isKindOf(SS2ParamContinuous)) {
@@ -214,7 +214,7 @@ SS2ParamMap : IdentityDictionary {
   blend {
     arg paramMap, blend = 0.5, args = nil;
     var p = SS2ParamMap();
-    args = args.defaultWhenNil(this.keys);
+    args = args ? this.keys;
     this.blendFrom(this, paramMap, blend, args);
     ^ this;
   }
@@ -235,7 +235,7 @@ SS2ParamMap : IdentityDictionary {
    */
   blendFrom {
     arg paramMap1, paramMap2, blend = 0.5, args = nil;
-    args = args.defaultWhenNil(paramMap1.keys);
+    args = args ? paramMap1.keys;
     args.do {
       arg key;
       if (paramMap1[key].isNil.not && paramMap2[key].isNil.not) {

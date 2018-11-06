@@ -34,7 +34,7 @@ SS2ParamListValues : SS2ParamList {
     arg n;
     var i;
     if (values.size > 0) {
-      n = n.defaultWhenNil(normalized);
+      n = n ? normalized;
       i = this.index(n);
       ^ values[i];
     } {
@@ -45,7 +45,7 @@ SS2ParamListValues : SS2ParamList {
   unmap {
     arg v;
     var n, i;
-    v = v.defaultWhenNil(value);
+    v = v ? value;
     i = values.find([v]);
     if (i.isNil) {
       ("Value not found in SS2ParamListValues.").warn;

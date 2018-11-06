@@ -81,7 +81,7 @@ SS2Param : Object {
 
   map {
     arg n;
-    n = n.defaultWhenNil(normalized);
+    n = n ? normalized;
     ^ n;
   }
 
@@ -90,7 +90,7 @@ SS2Param : Object {
    */
   unmap {
     arg v;
-    v = v.defaultWhenNil(value);
+    v = v ? value;
     ^ v;
   }
 
@@ -112,7 +112,7 @@ SS2Param : Object {
    */
   midi {
     arg n;
-    n = n.defaultWhenNil(normalized);
+    n = n ? normalized;
     ^ n.linlin(0, 1, midiMin, midiMax);
   }
 
@@ -146,7 +146,7 @@ SS2Param : Object {
    */
   midiUnmap {
     arg v;
-    v = v.defaultWhenNil(value);
+    v = v ? value;
     ^ this.midi(this.unmap(v));
   }
 
@@ -175,7 +175,7 @@ SS2Param : Object {
   display {
     arg n = nil;
     this.ensureDefaultDisplay();
-    n = n.defaultWhenNil(this);
+    n = n ? this;
     ^ displayStrategy.map(n);
   }
 
@@ -194,7 +194,7 @@ SS2Param : Object {
   */
   displayAs {
     arg a_display, n = nil;
-    n = n.defaultWhenNil(this);
+    n = n ? this;
     ^ a_display.map(n);
   }
 
@@ -232,7 +232,7 @@ SS2Param : Object {
   }
 
   observers {
-    ^ observers.defaultWhenNil(List[]);
+    ^ observers ? List[];
   }
 
   /**
@@ -264,7 +264,7 @@ SS2Param : Object {
   }
 
   events {
-    ^ events.defaultWhenNil(List[]);
+    ^ events ? List[];
   }
 
   /**
@@ -302,7 +302,7 @@ SS2Param : Object {
    */
   import {
     arg n;
-    this.value = n.defaultWhenNil(0).asFloat();
+    this.value = (n ? 0).asFloat();
     ^ this;
   }
 
@@ -321,7 +321,7 @@ SS2Param : Object {
   transformOut {
     arg n = nil;
     if (prCachedTransform.isNil) {
-      n = n.defaultWhenNil(this.value);
+      n = n ? this.value;
       prCachedTransform = n;
     };
     ^ prCachedTransform;

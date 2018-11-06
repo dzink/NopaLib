@@ -8,7 +8,7 @@ SS2ParamSemitone : SS2ParamContinuous {
 
   semitones {
     arg n;
-    n = n.defaultWhenNil(value);
+    n = n ? value;
     ^ n;
   }
 
@@ -20,7 +20,7 @@ SS2ParamSemitone : SS2ParamContinuous {
 
   ratio {
     arg n;
-    n = n.defaultWhenNil(value).midiratio;
+    n = (n ? value).midiratio;
     ^ n;
   }
 
@@ -31,7 +31,7 @@ SS2ParamSemitone : SS2ParamContinuous {
 
   hz {
     arg n;
-    n = n.defaultWhenNil(value).midicps;
+    n = (n ? value).midicps;
     ^ n;
   }
 
@@ -43,7 +43,7 @@ SS2ParamSemitone : SS2ParamContinuous {
   transformOut {
     arg n = nil;
     if (prCachedTransform.isNil) {
-      n = n.defaultWhenNil(this.value);
+      n = n ? this.value;
       n = switch(conversionStrategy,
         \hz, { this.hz(n) },
         \ratio, { this.ratio(n) },

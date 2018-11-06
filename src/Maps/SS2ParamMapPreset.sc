@@ -40,7 +40,7 @@ Event[
 
 	import {
 		arg map, args = nil;
-		args = args.defaultWhenNil(map.keys);
+		args = args ? map.keys;
 		args.do {
 			arg key;
 			this.put(key, map[key].export);
@@ -50,7 +50,7 @@ Event[
 
 	export {
 		arg map, args = nil;
-		args = args.defaultWhenNil(map.keys);
+		args = args ? map.keys;
 		args.do {
 			arg key;
 			map[key].import(this.at(key));
@@ -76,7 +76,7 @@ Event[
 		arg path, descriptor = nil;
 		var fileContents, fileName, file, timeStamp;
 		timeStamp = SS2FileUtility.formatTimeStamp();
-		descriptor = descriptor.defaultWhenNil(timeStamp).asString();
+		descriptor = (descriptor ? timeStamp).asString();
 		fileName = SS2FileUtility.generateFileName(path, "migration", descriptor);
 		fileContents = migrationFileTemplate.replace("@timeStamp", timeStamp);
 		^ SS2FileUtility.writeSafe(fileName, fileContents);

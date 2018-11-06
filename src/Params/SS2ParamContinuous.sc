@@ -116,7 +116,7 @@ SS2ParamContinuous : SS2Param {
    */
   map {
     arg n;
-    n = n.defaultWhenNil(normalized);
+    n = n ? normalized;
     ^ controlSpec.map(n).round(round);
   }
 
@@ -125,7 +125,7 @@ SS2ParamContinuous : SS2Param {
    */
   unmap {
     arg v;
-    v = v.defaultWhenNil(value);
+    v = v ? value;
     ^ controlSpec.unmap(v);
   }
 
