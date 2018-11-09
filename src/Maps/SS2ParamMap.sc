@@ -249,4 +249,21 @@ SS2ParamMap : IdentityDictionary {
     };
     ^ this;
   }
+
+  /**
+   * If a subset of this map's keys are the same as a node's arguments, then
+   * they can be conveniently mapped so that new values are automatically sent
+   * to nodes.
+   */
+  linkToNode {
+    arg node, args = nil;
+    args = args ? this.keys();
+    args.do {
+			arg key;
+      [key, node].postln;
+			this.at(key).addObserver(SS2ParamNodeObserver(node, key));
+			node.set(key, this[key].transformOut);
+		}
+    ^ this;
+  }
 }
