@@ -1,0 +1,71 @@
+(
+Routine {
+	var dir = "/Users/danzinkevich/Library/Application\\ Support/SuperCollider/Extensions/ss2/extensions/Parameter/src";
+	var renameFiles = false;
+	var replaceStrings = true;
+	[
+	  "SS2ParamDisplayCenterable", "NopaCenterableString",
+	  "SS2ParamDisplayDb", "NopaDbString",
+	  "SS2ParamDisplayList", "NopaListString",
+	  "SS2ParamDisplayNormalized", "NopaNormalizedString",
+	  "SS2ParamDisplayPercent", "NopaPercentString",
+	  "SS2ParamDisplaySemitone", "NopaSemitoneString",
+	  "SS2ParamDisplay", "NopaString",
+
+	  "SS2MidiFuncResponsive", "NopaMidiMomentumConnection",
+	  "SS2MidiFunc", "NopaMidiConnection",
+
+		"SS2FileUtility", "NopaFileUtility",
+
+	  "SS2ParamMapPresetDictionary", "NopaPresetUtility",
+	  "SS2ParamMapPreset", "NopaPreset",
+	  "SS2ParamMap", "NopaDictionary",
+
+	  "SS2ParamActionObserver", "NopaActionTarget",
+	  "SS2ParamNodeObserver", "NopaNodeTarget",
+	  "SS2ParamMidiOut", "NopaMidiTarget",
+
+	  "SS2ParamKnob", "NopaKnobWidget",
+	  "SS2ParamOptions", "NopaOptionWidget",
+	  "SS2ParamSelect", "NopaSelectWidget",
+	  "SS2ParamSlider", "NopaSliderWidget",
+	  "SS2ParamWidget", "NopaAbstractWidget",
+	  "SS2ParamMagicTitle", "NopaMagicTitleWidget",
+
+		"SS2ParamObserver", "SS2AbstractTarget",
+
+	  "SS2ParamContinuous", "NopaContinuousParam",
+	  "SS2ParamDb", "NopaDbParam",
+	  "SS2ParamInf", "NopaInfParam",
+	  "SS2ParamList", "NopaListParam",
+	  "SS2ParamListValues", "NopaListValuesParam",
+	  "SS2ParamSemitone", "NopaSemitoneParam",
+	  "SS2ParamMirror", "NopaMirrorParam",
+	  "SS2Param", "NopaAbstractParam",
+	  "SS2SS2SS2", "Nopa",
+	  "SS2SS2", "Nopa",
+	  "SS2", "Nopa",
+	].pairsDo {
+	  arg search, replace;
+		if (replaceStrings) {
+			var command = ("find " ++ dir ++ " -type f -exec sed -i '' -E -e 's/" ++ search ++ "/" ++ replace ++ "/g' {} \\;");
+			command.postln;
+			command.unixCmdGetStdOut.postln;
+		};
+		if (renameFiles) {
+			var result, results;
+			var command = "find " ++ dir ++ " -name \"*" ++ search ++ "*\"";
+			//command.postln;
+			result = command.unixCmdGetStdOutLines;
+			// result.size.postln;
+			result.do {
+				arg n;
+				n = n.replace(" ", "\\ ");
+				command = ("mv " ++ n ++ " " ++ n.replace(search, replace));
+				command.postln;
+				command.unixCmdGetStdOut.postln;
+			};
+		};
+	};
+}.play;
+)
