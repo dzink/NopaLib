@@ -1,4 +1,4 @@
-TestNopaListParamValues : TestNopaAbstractParamMeta {
+TestNopaListParamValues : TestNopaParamMeta {
   var param;
 
   setUp {

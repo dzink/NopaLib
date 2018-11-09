@@ -1,4 +1,4 @@
-TestNopaDictionary : UnitTest {
+TestNopaDictionary : TestNopaParamMeta {
   var paramMap;
 
   setUp {

@@ -1,4 +1,4 @@
-TestNopaString : TestNopaAbstractParamMeta {
+TestNopaString : TestNopaParamMeta {
   var param;
   var display;
 

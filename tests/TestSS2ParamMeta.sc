@@ -4,6 +4,6 @@
  *   TestSS2ParamMeta.runAll()
  */
 
-TestSS2ParamMeta : UnitTest {
+TestNopaMeta : UnitTest {
 
 }

@@ -1,4 +1,4 @@
-TestNopaMirrorParam : TestNopaAbstractParamMeta {
+TestNopaMirrorParam : TestNopaParamMeta {
   var param;
 
   setUp {
